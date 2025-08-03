@@ -1,0 +1,23 @@
+---
+import WaitlistButton from "./WaitlistButton.tsx";
+---
+
+<nav
+  class="absolute top-0 left-0 right-0 flex justify-between items-center px-24 py-2"
+>
+  <div class="flex items-center justify-center gap-8 text-sm">
+    <a href="/" class="font-serif text-2xl">halo</a>
+    <a href="/mission">Mission</a>
+    <a href="/about">About</a>
+    <a href="/roadmap">Roadmap</a>
+  </div>
+  <div class="flex items-center justify-center gap-8 text-sm">
+    <a href="mailto:mitra.ananjan@gmail.com?subject=About%20Halo">Contact</a>
+    <WaitlistButton
+      className="bg-black text-white py-1 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
+      client:load
+    >
+      Join the Waitlist
+    </WaitlistButton>
+  </div>
+</nav>

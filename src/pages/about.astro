@@ -1,0 +1,59 @@
+---
+import "../styles/global.css";
+import "@fontsource/instrument-serif";
+import "@fontsource-variable/dm-sans";
+import Navbar from "../components/Navbar.astro";
+import WaitlistButton from "../components/WaitlistButton.tsx";
+import Footer from "../components/Footer.astro";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Learn about the team behind Halo and our journey to make the world safer."
+    />
+    <title>Halo - Who we are</title>
+  </head>
+  <body class="font-sans">
+    <main>
+      <Navbar />
+      <div class="h-screen flex items-center justify-center">
+        <div class="space-y-10 max-w-2xl">
+          <div class="text-6xl font-serif">About Us</div>
+          <div class="font-satoshi text-lg leading-relaxed">
+            We're Ananjan and Ritankar, two friends who decided we couldn't just
+            stand by while people we care about face real safety threats every
+            day.
+          </div>
+          <div class="font-satoshi text-lg leading-relaxed">
+            After hearing too many stories from friends and family about feeling
+            unsafe walking alone, dealing with harassment, or being in dangerous
+            situations without help, we realized the tools out there just
+            weren't cutting it. Most safety apps are clunky, unreliable when you
+            need them most, or miss the mark entirely on what people actually
+            need in those critical moments.
+          </div>
+          <div class="font-satoshi text-lg leading-relaxed">
+            So we're building Halo - not as a business opportunity, but because
+            we genuinely believe everyone deserves to feel safe and have real
+            help when they need it. We're putting everything we've got into
+            creating something that could actually make a difference for our
+            community and beyond.
+          </div>
+          <div class="font-satoshi text-lg leading-relaxed">
+            This isn't just another app for us. It's personal.
+          </div>
+          <WaitlistButton
+            className="bg-black text-white py-1.5 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
+            client:load>Get to know us &gt;</WaitlistButton
+          >
+        </div>
+      </div>
+      <Footer />
+    </main>
+  </body>
+</html>

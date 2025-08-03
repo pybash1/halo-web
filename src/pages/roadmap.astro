@@ -2,8 +2,8 @@
 import "../styles/global.css";
 import "@fontsource/instrument-serif";
 import "@fontsource-variable/dm-sans";
-import WaitlistButton from "../components/WaitlistButton.tsx";
 import Navbar from "../components/Navbar.astro";
+import WaitlistButton from "../components/WaitlistButton.tsx";
 import Footer from "../components/Footer.astro";
 ---
 
@@ -14,27 +14,21 @@ import Footer from "../components/Footer.astro";
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Browse at the speed of thought with Perplexity Comet - the AI-powered browser that anticipates your needs."
+      content="See what's coming next for Halo and our journey to transform personal safety."
     />
-    <title>Halo - Because you're safety matters</title>
+    <title>Halo - Roadmap</title>
   </head>
   <body class="font-sans">
     <main>
       <Navbar />
       <div class="h-screen flex items-center justify-center">
-        <div class="space-y-10">
-          <div class="text-6xl font-serif">Be Safe</div>
-          <div class="font-satoshi max-w-96">
-            Ever felt afraid, scared or awkward while returning home? Let's
-            change that for you and everyone else you love. No more worrying, no
-            more shady alleys. Start being safe. ✨
-          </div>
+        <div class="space-y-10 max-w-2xl">
+          <div class="text-6xl font-serif">Roadmap</div>
+          <div>Coming soon...</div>
           <WaitlistButton
             className="bg-black text-white py-1.5 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
-            client:load
+            client:load>Follow to stay updated &gt;</WaitlistButton
           >
-            Make the world safer &gt;
-          </WaitlistButton>
         </div>
       </div>
       <Footer />
