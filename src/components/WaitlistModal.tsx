@@ -7,16 +7,23 @@ interface WaitlistModalProps {
 
 export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onClose();
+        handleClose();
       }
     };
 
     if (isOpen) {
       document.addEventListener("keydown", handleEscape);
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
     }
 
     return () => {
@@ -24,18 +31,51 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     };
   }, [isOpen, onClose]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      onClose();
+    }, 200);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Email submitted:", email);
-    // You can add your waitlist logic here
-    onClose();
-    setEmail("");
+    setIsLoading(true);
+    setMessage("");
+
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsSuccess(true);
+        setMessage("Thanks for joining! Check your email for confirmation.");
+        setEmail("");
+        setTimeout(() => {
+          handleClose();
+          setIsSuccess(false);
+          setMessage("");
+        }, 2000);
+      } else {
+        setMessage(data.error || "Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      setMessage("Network error. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      handleClose();
     }
   };
 
@@ -43,12 +83,16 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 shadow-2xl"
+      className={`fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 shadow-2xl transition-opacity duration-200 ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
+      <div className={`bg-white rounded-lg p-8 max-w-md w-full mx-4 relative transition-all duration-200 ${
+        isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+      }`}>
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute cursor-pointer top-4 right-4 text-black hover:text-gray-500 transition ease-in-out duration-500 text-xl leading-none"
         >
           ×
@@ -67,12 +111,19 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               required
+              disabled={isLoading}
             />
+            {message && (
+              <div className={`text-sm text-center ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+                {message}
+              </div>
+            )}
             <button
               type="submit"
-              className="w-full bg-black text-white py-2 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer"
+              disabled={isLoading}
+              className="w-full bg-black text-white py-2 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Join the Waitlist &gt;
+              {isLoading ? 'Joining...' : 'Join the Waitlist >'}
             </button>
           </form>
         </div>
