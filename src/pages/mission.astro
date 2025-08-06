@@ -18,35 +18,35 @@ import Footer from "../components/Footer.astro";
     />
     <title>Halo - Mission</title>
   </head>
-  <body class="font-sans">
+  <body class="font-sans dark:bg-black dark:text-white">
     <main>
       <Navbar />
-      <div class="h-screen flex items-center justify-center">
-        <div class="space-y-10 max-w-2xl">
-          <div class="text-6xl font-serif">Our Mission</div>
-          <div class="font-satoshi text-lg leading-relaxed">
+      <div class="h-screen flex items-center justify-center px-4 md:px-10">
+        <div class="space-y-6 md:space-y-10 max-w-2xl overflow-hidden">
+          <div class="text-4xl md:text-6xl font-serif">Our Mission</div>
+          <div class="font-satoshi text-base md:text-lg leading-relaxed">
             We believe safety shouldn't be a luxury or something you have to
             worry about when you're just trying to live your life.
           </div>
-          <div class="font-satoshi text-lg leading-relaxed">
+          <div class="font-satoshi text-base md:text-lg leading-relaxed">
             Our mission is simple: give people the tools they need to feel
             secure and get help fast when it matters most. Whether someone is
             walking home alone, in an unsafe relationship, or facing any threat
             to their wellbeing, they deserve more than just hoping for the best.
           </div>
-          <div class="font-satoshi text-lg leading-relaxed">
+          <div class="font-satoshi text-base md:text-lg leading-relaxed">
             We're building Halo to bridge that gap between feeling vulnerable
             and feeling protected. Real safety features that work when you need
             them, designed by people who actually understand what it's like to
             feel unsafe.
           </div>
-          <div class="font-satoshi text-lg leading-relaxed">
+          <div class="font-satoshi text-base md:text-lg leading-relaxed">
             Everyone should be able to move through the world with confidence,
             knowing that help is always within reach. That's not just our goal -
             it's our responsibility.
           </div>
           <WaitlistButton
-            className="bg-black text-white py-1.5 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
+            className="bg-black text-white dark:bg-white dark:text-black py-1.5 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
             client:load>Join our mission &gt;</WaitlistButton
           >
         </div>

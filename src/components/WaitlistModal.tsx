@@ -83,13 +83,13 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
 
   return (
     <div
-      className={`fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 shadow-2xl transition-opacity duration-200 ${
+      className={`fixed inset-0 bg-black/60 backdrop-blur-xs flex md:items-center md:justify-center items-end z-50 shadow-2xl transition-opacity duration-200 ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
       onClick={handleBackdropClick}
     >
-      <div className={`bg-white rounded-lg p-8 max-w-md w-full mx-4 relative transition-all duration-200 ${
-        isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+      <div className={`bg-white md:rounded-lg rounded-t-2xl p-8 max-w-md w-full mx-0 md:mx-4 relative transition-all duration-300 ${
+        isVisible ? 'opacity-100 md:scale-100 translate-y-0' : 'opacity-0 md:scale-95 translate-y-full'
       }`}>
         <button
           onClick={handleClose}

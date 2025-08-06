@@ -14,20 +14,20 @@ import Footer from "../components/Footer.astro";
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Halo - Because you're safety matters</title>
   </head>
-  <body class="font-sans">
+  <body class="font-sans dark:bg-black dark:text-white">
     <main>
       <Navbar />
-      <div class="h-screen flex items-center justify-center">
-        <div class="space-y-10">
-          <div class="text-6xl font-serif">Be Safe</div>
-          <div class="font-satoshi max-w-96">
+      <div class="h-screen flex items-center justify-center px-4 md:px-10">
+        <div class="space-y-6 md:space-y-10">
+          <div class="text-4xl md:text-6xl font-serif">Be Safe</div>
+          <div class="font-satoshi max-w-96 text-sm md:text-base">
             Ever been in a situation where you felt threatened or scared with no
             way out? We're here to change that for you and everyone you care
             about. No more suffering alone, no more dead ends. It's time to feel
             safe. ✨
           </div>
           <WaitlistButton
-            className="bg-black text-white py-1.5 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
+            className="bg-black text-white dark:bg-white dark:text-black py-1.5 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
             client:load
           >
             Make the world safer &gt;

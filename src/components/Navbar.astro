@@ -3,18 +3,28 @@ import WaitlistButton from "./WaitlistButton.tsx";
 ---
 
 <nav
-  class="absolute top-0 left-0 right-0 flex justify-between items-center px-24 py-2"
+  class="flex flex-col md:flex-row justify-between items-center px-4 md:px-24 py-2 bg-white dark:bg-black dark:text-white"
 >
-  <div class="flex items-center justify-center gap-8 text-sm">
-    <a href="/" class="font-serif text-2xl">halo</a>
+  <a href="/" class="block md:hidden font-serif text-2xl pb-4">halo</a>
+  <div class="flex items-center justify-center gap-4 md:gap-8 text-sm">
+    <a href="/" class="hidden md:block font-serif text-2xl">halo</a>
     <a href="/mission">Mission</a>
     <a href="/about">About</a>
     <a href="/roadmap">Roadmap</a>
   </div>
-  <div class="flex items-center justify-center gap-8 text-sm">
+  <div class="flex md:hidden items-center justify-center gap-4 text-sm pt-2">
     <a href="mailto:mitra.ananjan@gmail.com?subject=About%20Halo">Contact</a>
     <WaitlistButton
-      className="bg-black text-white py-1 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
+      className="bg-black text-white dark:bg-black dark:text-white py-1 text-xs rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2"
+      client:load
+    >
+      Join Waitlist
+    </WaitlistButton>
+  </div>
+  <div class="hidden md:flex items-center justify-center gap-8 text-sm">
+    <a href="mailto:mitra.ananjan@gmail.com?subject=About%20Halo">Contact</a>
+    <WaitlistButton
+      className="bg-black text-white dark:bg-white dark:text-black py-1 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
       client:load
     >
       Join the Waitlist
