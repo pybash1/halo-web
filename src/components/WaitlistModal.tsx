@@ -44,10 +44,10 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     setMessage("");
 
     try {
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
       });
@@ -84,16 +84,20 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
   return (
     <div
       className={`fixed inset-0 bg-black/60 backdrop-blur-xs flex md:items-center md:justify-center items-end z-50 shadow-2xl transition-opacity duration-200 ${
-        isVisible ? 'opacity-100' : 'opacity-0'
+        isVisible ? "opacity-100" : "opacity-0"
       }`}
       onClick={handleBackdropClick}
     >
-      <div className={`bg-white md:rounded-lg rounded-t-2xl p-8 max-w-md w-full mx-0 md:mx-4 relative transition-all duration-300 ${
-        isVisible ? 'opacity-100 md:scale-100 translate-y-0' : 'opacity-0 md:scale-95 translate-y-full'
-      }`}>
+      <div
+        className={`bg-white dark:bg-neutral-900 md:rounded-lg rounded-t-2xl p-8 max-w-md w-full mx-0 md:mx-4 relative transition-all duration-300 ${
+          isVisible
+            ? "opacity-100 md:scale-100 translate-y-0"
+            : "opacity-0 md:scale-95 translate-y-full"
+        }`}
+      >
         <button
           onClick={handleClose}
-          className="absolute cursor-pointer top-4 right-4 text-black hover:text-gray-500 transition ease-in-out duration-500 text-xl leading-none"
+          className="absolute cursor-pointer top-4 right-4 dark:text-white text-black hover:text-gray-500 transition ease-in-out duration-500 text-xl leading-none"
         >
           ×
         </button>
@@ -114,16 +118,18 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
               disabled={isLoading}
             />
             {message && (
-              <div className={`text-sm text-center ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+              <div
+                className={`text-sm text-center ${isSuccess ? "text-green-600" : "text-red-600"}`}
+              >
                 {message}
               </div>
             )}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-black text-white py-2 text-sm rounded-md hover:bg-black/80 transition-colors ease-in-out duration-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-black text-white dark:bg-white dark:text-black py-2 text-sm rounded-md hover:bg-black/80 dark:hover:bg-white/80 transition-colors ease-in-out duration-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Joining...' : 'Join the Waitlist >'}
+              {isLoading ? "Joining..." : "Join the Waitlist >"}
             </button>
           </form>
         </div>
