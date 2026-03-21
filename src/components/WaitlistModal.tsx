@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface WaitlistModalProps {
   isOpen: boolean;
@@ -11,6 +12,11 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -79,11 +85,11 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
-      className={`fixed inset-0 bg-black/60 backdrop-blur-xs flex md:items-center md:justify-center items-end z-50 shadow-2xl transition-opacity duration-200 ${
+      className={`fixed inset-0 bg-black/60 backdrop-blur-xs flex md:items-center md:justify-center items-end z-[100] shadow-2xl transition-opacity duration-200 ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
       onClick={handleBackdropClick}
@@ -134,6 +140,7 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
           </form>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

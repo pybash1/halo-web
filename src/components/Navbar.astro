@@ -1,24 +1,95 @@
 ---
-import WaitlistButton from "./WaitlistButton.tsx";
+import WaitlistButton from "./WaitlistButton";
 ---
 
-<nav
-  class="flex flex-col md:flex-row justify-between items-center px-4 md:px-24 py-2 bg-white dark:bg-black dark:text-white"
->
-  <a href="/" class="block md:hidden font-serif text-2xl pb-4">halo</a>
-  <div class="flex items-center justify-center gap-4 md:gap-8 text-sm">
-    <a href="/" class="hidden md:block font-serif text-2xl">halo</a>
-    <a href="/mission">Mission</a>
-    <a href="/about">About</a>
-    <a href="/roadmap">Roadmap</a>
-  </div>
-  <div class="hidden md:flex items-center justify-center gap-8 text-sm">
-    <a href="mailto:mitra.ananjan@gmail.com?subject=About%20Halo">Contact</a>
-    <WaitlistButton
-      className="bg-black text-white dark:bg-white dark:text-black py-1 text-sm rounded-md hover:bg-black/80 dark:hover:bg-white/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
-      client:load
-    >
-      Join the Waitlist
-    </WaitlistButton>
+<nav class="sticky top-0 z-50 px-4 pt-4">
+  <div class="navbar-glass relative mx-auto flex w-full max-w-5xl items-center justify-between rounded-[24px] px-4 py-3 md:px-6 md:py-4">
+    <a href="#top" class="font-serif text-2xl text-black/85">halo</a>
+
+    <div class="absolute left-1/2 flex -translate-x-1/2 items-center justify-center gap-4 text-sm font-medium text-black/80 md:gap-8">
+      <a href="#mission" class="group relative inline-flex h-5 overflow-hidden">
+        <div class="transition-transform duration-[400ms] ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-5">
+          <span class="flex h-5 items-center">Mission</span>
+          <span class="flex h-5 items-center text-black">Mission</span>
+        </div>
+      </a>
+
+      <a href="#about" class="group relative inline-flex h-5 overflow-hidden">
+        <div class="transition-transform duration-[400ms] ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-5">
+          <span class="flex h-5 items-center">About</span>
+          <span class="flex h-5 items-center text-black">About</span>
+        </div>
+      </a>
+
+      <div class="group relative flex h-5 cursor-not-allowed items-center justify-center">
+        <span>Roadmap</span>
+        <div class="pointer-events-none absolute -inset-x-4 z-10 flex -rotate-3 scale-75 items-center justify-center opacity-0 transition-all duration-[400ms] ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-rotate-12 group-hover:scale-100 group-hover:opacity-100">
+          <div class="flex items-center justify-center bg-[#FFC000] border-[1.5px] border-black px-2 py-1 shadow-sm">
+            <span class="whitespace-nowrap text-[0.5rem] font-black leading-none tracking-widest text-black">COMING SOON</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center text-sm">
+      <WaitlistButton
+        className="bg-black text-white py-2 px-4 text-sm rounded-[24px] hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)] transition-shadow duration-300 cursor-pointer"
+        client:load
+      >
+        Join the Waitlist
+      </WaitlistButton>
+    </div>
   </div>
 </nav>
+
+<style>
+  .navbar-glass {
+    background: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0.2)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+  }
+
+  .navbar-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    background-image: radial-gradient(
+      circle at 20% 30%,
+      rgba(255, 255, 255, 0.65) 0.6px,
+      transparent 0.8px
+    );
+    background-size: 4px 4px;
+    mix-blend-mode: overlay;
+  }
+
+  @media (max-width: 900px) {
+    .navbar-glass {
+      padding-right: 12px;
+      padding-left: 12px;
+    }
+
+    .navbar-glass > div.absolute {
+      gap: 12px;
+      font-size: 0.82rem;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .navbar-glass > div.absolute {
+      position: static;
+      transform: none;
+      margin: 0 auto;
+      flex: 1;
+      justify-content: center;
+    }
+  }
+</style>

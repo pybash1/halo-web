@@ -1,8 +1,80 @@
-<footer
-  class="bg-white flex items-center justify-center px-12 py-4 text-black/40 text-sm dark:bg-black dark:text-white/40"
->
-  &copy; {new Date().getFullYear()} Ananjan Mitra & Ritankar Bhunia&nbsp;<span
-    class="font-serif text-base hidden md:block"
-    >- because your safety matters.</span
-  >
+<footer class="relative px-4 pb-6 pt-10 md:px-6 md:pt-14">
+  <div class="absolute inset-0 -z-10 bg-black/35 backdrop-blur-[2px] [mask-image:linear-gradient(to_bottom,transparent_0%,black_15%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_15%)]"></div>
+  <div class="mx-auto max-w-7xl rounded-[40px] border border-white/15 bg-[#071018]/95 p-8 font-sans text-white/85 shadow-[0_18px_48px_rgba(0,0,0,0.45)] md:p-12">
+    <div class="grid gap-12 md:grid-cols-[1.35fr_2fr] md:gap-10">
+      <div class="space-y-6">
+        <div class="font-serif text-3xl leading-none tracking-tight text-white">halo</div>
+        <p class="max-w-[20rem] text-justify text-sm leading-relaxed text-white/70">
+          Founded by Ananjan Mitra and Ritankar Bhunia, Halo is being built to make personal safety faster, simpler, and genuinely reliable when people need support the most.
+        </p>
+        <div class="flex flex-col items-start gap-3 text-sm text-white/80">
+          <a href="#" class="footer-social-link">Instagram <span class="material-symbols-outlined footer-arrow">north_east</span></a>
+          <a href="#" class="footer-social-link">X <span class="material-symbols-outlined footer-arrow">north_east</span></a>
+          <a href="#" class="footer-social-link">LinkedIn <span class="material-symbols-outlined footer-arrow">north_east</span></a>
+        </div>
+      </div>
+
+      <div class="grid gap-8 md:grid-cols-3 md:pl-10">
+        <div class="space-y-3">
+          <h4 class="text-sm font-semibold tracking-wide text-white/55">Company</h4>
+          <div class="space-y-2 text-base text-white/85">
+            <a href="#mission" class="block transition-colors hover:text-white">Mission</a>
+            <a href="#about" class="block transition-colors hover:text-white">About</a>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-sm font-semibold tracking-wide text-white/55">Resources</h4>
+          <div class="space-y-2 text-base text-white/85">
+            <a href="#" class="block transition-colors hover:text-white">Press Kit</a>
+            <a href="#" class="block transition-colors hover:text-white">Safety Notes</a>
+            <a href="#" class="block transition-colors hover:text-white">FAQ</a>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-sm font-semibold tracking-wide text-white/55">Support</h4>
+          <div class="space-y-2 text-base text-white/85">
+            <a href="mailto:mitra.ananjan@gmail.com?subject=About%20Halo" class="block transition-colors hover:text-white">Contact Us</a>
+            <a href="#" class="block transition-colors hover:text-white">Privacy Policy</a>
+            <a href="#" class="block transition-colors hover:text-white">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 border-t border-white/10 pt-6 text-center text-sm font-serif text-white/45 md:mt-12">
+      © {new Date().getFullYear()} Halo. All Rights Reserved.
+    </div>
+  </div>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,500,0,0");
+
+    .material-symbols-outlined {
+      font-variation-settings:
+        "FILL" 0,
+        "wght" 500,
+        "GRAD" 0,
+        "opsz" 24;
+      font-size: 12px;
+      line-height: 1;
+      transition: transform 200ms ease;
+    }
+
+    .footer-social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      transition: color 200ms ease;
+    }
+
+    .footer-social-link:hover {
+      color: white;
+    }
+
+    .footer-social-link:hover .footer-arrow {
+      transform: translate(2px, -2px);
+    }
+  </style>
 </footer>

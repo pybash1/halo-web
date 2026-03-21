@@ -12,3 +12,23 @@
   --font-sans: "DM Sans Variable", sans-serif;
   --font-satoshi: "Satoshi", sans-serif;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+#mission,
+#about,
+#roadmap {
+  scroll-margin-top: 0;
+}
+
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none !important;
+}
+
+.has-custom-cursor input,
+.has-custom-cursor textarea {
+  cursor: text !important;
+}
