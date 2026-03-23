@@ -157,10 +157,7 @@ export default function WaitlistModal({ isOpen, onClose, variant = 'standard' }:
               }`}
             >
               {isLoading ? "Joining..." : (
-                <>
-                  Join the Waitlist
-                  <span className="font-sans font-medium text-lg leading-none transform translate-y-[-1px]">&rarr;</span>
-                </>
+                  <span className="font-sans font-medium text-xs leading-none transform translate-y-[-1px]">Join the Waitlist&nbsp;&nbsp;&rarr;</span>
               )}
             </button>
           </form>

@@ -6,10 +6,17 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Matter";
+  src: url("/fonts/Matter.woff2") format("woff2");
+  font-display: swap;
+}
+
 @theme {
   --font-serif: "Instrument Serif", serif;
-  --font-sans: "DM Sans Variable", sans-serif;
+  --font-sans: "Matter", sans-serif;
   --font-satoshi: "Satoshi", sans-serif;
+  --font-matter: "Matter", "Satoshi", sans-serif;
 
   --animate-spin-slow: spin 8s linear infinite;
 }
