@@ -156,7 +156,7 @@ export default function WaitlistModal({ isOpen, onClose, variant = 'standard' }:
                 : 'bg-black text-white dark:bg-white dark:text-black hover:bg-black/80 dark:hover:bg-white/80 py-2 rounded-md'
               }`}
             >
-              {isLoading ? "Joining..." : "Join the Waitlist >"}
+              {isLoading ? "Joining..." : <>Join the Waitlist &rarr;</>}
             </button>
           </form>
         </div>
