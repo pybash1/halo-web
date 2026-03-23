@@ -3,7 +3,6 @@
 @font-face {
   font-family: "Satoshi";
   src: url("/fonts/Satoshi-Variable.woff2") format("woff2");
-  font-style: normal;
   font-display: swap;
 }
 
@@ -11,24 +10,43 @@
   --font-serif: "Instrument Serif", serif;
   --font-sans: "DM Sans Variable", sans-serif;
   --font-satoshi: "Satoshi", sans-serif;
+
+  --animate-spin-slow: spin 8s linear infinite;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+/* Custom cursor system */
+html,
+body {
+  cursor: url("/cursor-default.svg") 3 2, default;
+}
+
+button,
+a {
+  cursor: url("/cursor-pointer.svg") 7 6, pointer;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  cursor: url("/cursor-text.svg") 12 12, text;
+}
+
+button:disabled,
+[disabled] {
+  cursor: not-allowed;
+}
+
+/* Default cursor for sections */
+section {
+  cursor: url("/cursor-default.svg") 3 2, default;
+}
+
+/* Ensure mission and about sections have default cursor */
 #mission,
-#about,
-#roadmap {
-  scroll-margin-top: 0;
-}
-
-.has-custom-cursor,
-.has-custom-cursor * {
-  cursor: none !important;
-}
-
-.has-custom-cursor input,
-.has-custom-cursor textarea {
-  cursor: text !important;
+#about {
+  cursor: url("/cursor-default.svg") 3 2, default;
 }

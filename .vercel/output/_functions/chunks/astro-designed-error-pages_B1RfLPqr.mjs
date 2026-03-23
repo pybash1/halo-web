@@ -1,4 +1,4 @@
-import { ak as NOOP_MIDDLEWARE_HEADER, al as REDIRECT_STATUS_CODES, A as AstroError, am as ActionsReturnedInvalidDataError, S as DEFAULT_404_COMPONENT } from './astro/server_DJLMGM8A.mjs';
+import { ai as NOOP_MIDDLEWARE_HEADER, aj as REDIRECT_STATUS_CODES, A as AstroError, ak as ActionsReturnedInvalidDataError, Q as DEFAULT_404_COMPONENT } from './astro/server_YBKXH5Uu.mjs';
 import { parse, stringify } from 'devalue';
 import { escape } from 'html-escaper';
 
@@ -214,7 +214,7 @@ function deserializeActionResult(res) {
     error: void 0
   };
 }
-const actionResultErrorStack = /* @__PURE__ */ (function actionResultErrorStackFn() {
+const actionResultErrorStack = /* @__PURE__ */ function actionResultErrorStackFn() {
   let errorStack;
   return {
     set(stack) {
@@ -224,7 +224,7 @@ const actionResultErrorStack = /* @__PURE__ */ (function actionResultErrorStackF
       return errorStack;
     }
   };
-})();
+}();
 
 function template({
   title,

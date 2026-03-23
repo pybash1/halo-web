@@ -9,7 +9,6 @@ export default function ScrollVideoBackground() {
 
   useEffect(() => {
     const video = videoRef.current;
-
     if (!video) return;
 
     let tween: gsap.core.Tween | null = null;

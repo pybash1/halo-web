@@ -1,5 +1,5 @@
-import { A as AstroError, an as MissingSharp } from './astro/server_DJLMGM8A.mjs';
-import { b as baseService, p as parseQuality } from './generic_zOIePCiK.mjs';
+import { A as AstroError, al as MissingSharp } from './astro/server_YBKXH5Uu.mjs';
+import { b as baseService, p as parseQuality } from './generic_BJP-VWho.mjs';
 
 let sharp;
 const qualityTable = {
@@ -36,7 +36,6 @@ const sharpService = {
   async transform(inputBuffer, transformOptions, config) {
     if (!sharp) sharp = await loadSharp();
     const transform = transformOptions;
-    const kernel = config.service.config.kernel;
     if (transform.format === "svg") return { data: inputBuffer, format: "svg" };
     const result = sharp(inputBuffer, {
       failOnError: false,
@@ -44,14 +43,12 @@ const sharpService = {
       limitInputPixels: config.service.config.limitInputPixels
     });
     result.rotate();
-    const { format } = await result.metadata();
     const withoutEnlargement = Boolean(transform.fit);
     if (transform.width && transform.height && transform.fit) {
       const fit = fitMap[transform.fit] ?? "inside";
       result.resize({
         width: Math.round(transform.width),
         height: Math.round(transform.height),
-        kernel,
         fit,
         position: transform.position,
         withoutEnlargement
@@ -59,18 +56,13 @@ const sharpService = {
     } else if (transform.height && !transform.width) {
       result.resize({
         height: Math.round(transform.height),
-        kernel,
         withoutEnlargement
       });
     } else if (transform.width) {
       result.resize({
         width: Math.round(transform.width),
-        kernel,
         withoutEnlargement
       });
-    }
-    if (transform.background) {
-      result.flatten({ background: transform.background });
     }
     if (transform.format) {
       let quality = void 0;
@@ -82,16 +74,21 @@ const sharpService = {
           quality = transform.quality in qualityTable ? qualityTable[transform.quality] : void 0;
         }
       }
-      if (transform.format === "webp" && format === "gif") {
+      const isGifInput = inputBuffer[0] === 71 && // 'G'
+      inputBuffer[1] === 73 && // 'I'
+      inputBuffer[2] === 70 && // 'F'
+      inputBuffer[3] === 56 && // '8'
+      (inputBuffer[4] === 57 || inputBuffer[4] === 55) && // '9' or '7'
+      inputBuffer[5] === 97;
+      if (transform.format === "webp" && isGifInput) {
         result.webp({ quality: typeof quality === "number" ? quality : void 0, loop: 0 });
       } else {
         result.toFormat(transform.format, { quality });
       }
     }
     const { data, info } = await result.toBuffer({ resolveWithObject: true });
-    const needsCopy = "buffer" in data && data.buffer instanceof SharedArrayBuffer;
     return {
-      data: needsCopy ? new Uint8Array(data) : data,
+      data,
       format: info.format
     };
   }

@@ -40,55 +40,7 @@ function joinPaths(...paths) {
   }).join("/");
 }
 function isRemotePath(src) {
-  if (!src) return false;
-  const trimmed = src.trim();
-  if (!trimmed) return false;
-  let decoded = trimmed;
-  let previousDecoded = "";
-  let maxIterations = 10;
-  while (decoded !== previousDecoded && maxIterations > 0) {
-    previousDecoded = decoded;
-    try {
-      decoded = decodeURIComponent(decoded);
-    } catch {
-      break;
-    }
-    maxIterations--;
-  }
-  if (/^[a-zA-Z]:/.test(decoded)) {
-    return false;
-  }
-  if (decoded[0] === "/" && decoded[1] !== "/" && decoded[1] !== "\\") {
-    return false;
-  }
-  if (decoded[0] === "\\") {
-    return true;
-  }
-  if (decoded.startsWith("//")) {
-    return true;
-  }
-  try {
-    const url = new URL(decoded, "http://n");
-    if (url.username || url.password) {
-      return true;
-    }
-    if (decoded.includes("@") && !url.pathname.includes("@") && !url.search.includes("@")) {
-      return true;
-    }
-    if (url.origin !== "http://n") {
-      const protocol = url.protocol.toLowerCase();
-      if (protocol === "file:") {
-        return false;
-      }
-      return true;
-    }
-    if (URL.canParse(decoded)) {
-      return true;
-    }
-    return false;
-  } catch {
-    return true;
-  }
+  return /^(?:http|ftp|https|ws):?\/\//.test(src) || src.startsWith("data:");
 }
 function slash(path) {
   return path.replace(/\\/g, "/");
@@ -102,107 +54,47 @@ function hasFileExtension(path) {
   return WITH_FILE_EXT.test(path);
 }
 
-function matchPattern(url, remotePattern) {
-  return matchProtocol(url, remotePattern.protocol) && matchHostname(url, remotePattern.hostname, true) && matchPort(url, remotePattern.port) && matchPathname(url, remotePattern.pathname, true);
-}
-function matchPort(url, port) {
-  return !port || port === url.port;
-}
-function matchProtocol(url, protocol) {
-  return !protocol || protocol === url.protocol.slice(0, -1);
-}
-function matchHostname(url, hostname, allowWildcard = false) {
-  if (!hostname) {
-    return true;
-  } else if (!allowWildcard || !hostname.startsWith("*")) {
-    return hostname === url.hostname;
-  } else if (hostname.startsWith("**.")) {
-    const slicedHostname = hostname.slice(2);
-    return slicedHostname !== url.hostname && url.hostname.endsWith(slicedHostname);
-  } else if (hostname.startsWith("*.")) {
-    const slicedHostname = hostname.slice(1);
-    if (!url.hostname.endsWith(slicedHostname)) {
-      return false;
-    }
-    const subdomainWithDot = url.hostname.slice(0, -(slicedHostname.length - 1));
-    return subdomainWithDot.endsWith(".") && !subdomainWithDot.slice(0, -1).includes(".");
-  }
-  return false;
-}
-function matchPathname(url, pathname, allowWildcard = false) {
-  if (!pathname) {
-    return true;
-  } else if (!allowWildcard || !pathname.endsWith("*")) {
-    return pathname === url.pathname;
-  } else if (pathname.endsWith("/**")) {
-    const slicedPathname = pathname.slice(0, -2);
-    return slicedPathname !== url.pathname && url.pathname.startsWith(slicedPathname);
-  } else if (pathname.endsWith("/*")) {
-    const slicedPathname = pathname.slice(0, -1);
-    if (!url.pathname.startsWith(slicedPathname)) {
-      return false;
-    }
-    const additionalPathChunks = url.pathname.slice(slicedPathname.length).split("/").filter(Boolean);
-    return additionalPathChunks.length === 1;
-  }
-  return false;
-}
-function isRemoteAllowed(src, {
-  domains,
-  remotePatterns
-}) {
-  if (!URL.canParse(src)) {
-    return false;
-  }
-  const url = new URL(src);
-  if (!["http:", "https:", "data:"].includes(url.protocol)) {
-    return false;
-  }
-  return domains.some((domain) => matchHostname(url, domain)) || remotePatterns.some((remotePattern) => matchPattern(url, remotePattern));
-}
-
 const decoder = new TextDecoder();
 const toUTF8String = (input, start = 0, end = input.length) => decoder.decode(input.slice(start, end));
-const toHexString = (input, start = 0, end = input.length) => input.slice(start, end).reduce((memo, i) => memo + `0${i.toString(16)}`.slice(-2), "");
-const getView = (input, offset) => new DataView(input.buffer, input.byteOffset + offset);
-const readInt16LE = (input, offset = 0) => getView(input, offset).getInt16(0, true);
-const readUInt16BE = (input, offset = 0) => getView(input, offset).getUint16(0, false);
-const readUInt16LE = (input, offset = 0) => getView(input, offset).getUint16(0, true);
-const readUInt24LE = (input, offset = 0) => {
-  const view = getView(input, offset);
-  return view.getUint16(0, true) + (view.getUint8(2) << 16);
+const toHexString = (input, start = 0, end = input.length) => input.slice(start, end).reduce((memo, i) => memo + ("0" + i.toString(16)).slice(-2), "");
+const readInt16LE = (input, offset = 0) => {
+  const val = input[offset] + input[offset + 1] * 2 ** 8;
+  return val | (val & 2 ** 15) * 131070;
 };
-const readInt32LE = (input, offset = 0) => getView(input, offset).getInt32(0, true);
-const readUInt32BE = (input, offset = 0) => getView(input, offset).getUint32(0, false);
-const readUInt32LE = (input, offset = 0) => getView(input, offset).getUint32(0, true);
-const readUInt64 = (input, offset, isBigEndian) => getView(input, offset).getBigUint64(0, !isBigEndian);
+const readUInt16BE = (input, offset = 0) => input[offset] * 2 ** 8 + input[offset + 1];
+const readUInt16LE = (input, offset = 0) => input[offset] + input[offset + 1] * 2 ** 8;
+const readUInt24LE = (input, offset = 0) => input[offset] + input[offset + 1] * 2 ** 8 + input[offset + 2] * 2 ** 16;
+const readInt32LE = (input, offset = 0) => input[offset] + input[offset + 1] * 2 ** 8 + input[offset + 2] * 2 ** 16 + (input[offset + 3] << 24);
+const readUInt32BE = (input, offset = 0) => input[offset] * 2 ** 24 + input[offset + 1] * 2 ** 16 + input[offset + 2] * 2 ** 8 + input[offset + 3];
+const readUInt32LE = (input, offset = 0) => input[offset] + input[offset + 1] * 2 ** 8 + input[offset + 2] * 2 ** 16 + input[offset + 3] * 2 ** 24;
 const methods = {
   readUInt16BE,
   readUInt16LE,
   readUInt32BE,
   readUInt32LE
 };
-function readUInt(input, bits, offset = 0, isBigEndian = false) {
+function readUInt(input, bits, offset, isBigEndian) {
+  offset = offset || 0;
   const endian = isBigEndian ? "BE" : "LE";
-  const methodName = `readUInt${bits}${endian}`;
+  const methodName = "readUInt" + bits + endian;
   return methods[methodName](input, offset);
 }
-function readBox(input, offset) {
-  if (input.length - offset < 4) return;
-  const boxSize = readUInt32BE(input, offset);
-  if (input.length - offset < boxSize) return;
+function readBox(buffer, offset) {
+  if (buffer.length - offset < 4) return;
+  const boxSize = readUInt32BE(buffer, offset);
+  if (buffer.length - offset < boxSize) return;
   return {
-    name: toUTF8String(input, 4 + offset, 8 + offset),
+    name: toUTF8String(buffer, 4 + offset, 8 + offset),
     offset,
     size: boxSize
   };
 }
-function findBox(input, boxName, currentOffset) {
-  while (currentOffset < input.length) {
-    const box = readBox(input, currentOffset);
+function findBox(buffer, boxName, offset) {
+  while (offset < buffer.length) {
+    const box = readBox(buffer, offset);
     if (!box) break;
     if (box.name === boxName) return box;
-    currentOffset += box.size > 0 ? box.size : 8;
+    offset += box.size;
   }
 }
 
@@ -240,14 +132,14 @@ const ICO = {
     const nbImages = readUInt16LE(input, 4);
     const imageSize = getImageSize$1(input, 0);
     if (nbImages === 1) return imageSize;
-    const images = [];
-    for (let imageIndex = 0; imageIndex < nbImages; imageIndex += 1) {
-      images.push(getImageSize$1(input, imageIndex));
+    const imgs = [imageSize];
+    for (let imageIndex = 1; imageIndex < nbImages; imageIndex += 1) {
+      imgs.push(getImageSize$1(input, imageIndex));
     }
     return {
-      width: imageSize.width,
       height: imageSize.height,
-      images
+      images: imgs,
+      width: imageSize.width
     };
   }
 };
@@ -295,63 +187,41 @@ const brandMap = {
   hevx: "heic"
   // heic-sequence
 };
-function detectType(input, start, end) {
-  let hasAvif = false;
-  let hasHeic = false;
-  let hasHeif = false;
+function detectBrands(buffer, start, end) {
+  let brandsDetected = {};
   for (let i = start; i <= end; i += 4) {
-    const brand = toUTF8String(input, i, i + 4);
-    if (brand === "avif" || brand === "avis") hasAvif = true;
-    else if (brand === "heic" || brand === "heix" || brand === "hevc" || brand === "hevx") hasHeic = true;
-    else if (brand === "mif1" || brand === "msf1") hasHeif = true;
+    const brand = toUTF8String(buffer, i, i + 4);
+    if (brand in brandMap) {
+      brandsDetected[brand] = 1;
+    }
   }
-  if (hasAvif) return "avif";
-  if (hasHeic) return "heic";
-  if (hasHeif) return "heif";
+  if ("avif" in brandsDetected || "avis" in brandsDetected) {
+    return "avif";
+  } else if ("heic" in brandsDetected || "heix" in brandsDetected || "hevc" in brandsDetected || "hevx" in brandsDetected) {
+    return "heic";
+  } else if ("mif1" in brandsDetected || "msf1" in brandsDetected) {
+    return "heif";
+  }
 }
 const HEIF = {
-  validate(input) {
-    const boxType = toUTF8String(input, 4, 8);
-    if (boxType !== "ftyp") return false;
-    const ftypBox = findBox(input, "ftyp", 0);
-    if (!ftypBox) return false;
-    const brand = toUTF8String(input, ftypBox.offset + 8, ftypBox.offset + 12);
-    return brand in brandMap;
+  validate(buffer) {
+    const ftype = toUTF8String(buffer, 4, 8);
+    const brand = toUTF8String(buffer, 8, 12);
+    return "ftyp" === ftype && brand in brandMap;
   },
-  calculate(input) {
-    const metaBox = findBox(input, "meta", 0);
-    const iprpBox = metaBox && findBox(input, "iprp", metaBox.offset + 12);
-    const ipcoBox = iprpBox && findBox(input, "ipco", iprpBox.offset + 8);
-    if (!ipcoBox) {
-      throw new TypeError("Invalid HEIF, no ipco box found");
+  calculate(buffer) {
+    const metaBox = findBox(buffer, "meta", 0);
+    const iprpBox = metaBox && findBox(buffer, "iprp", metaBox.offset + 12);
+    const ipcoBox = iprpBox && findBox(buffer, "ipco", iprpBox.offset + 8);
+    const ispeBox = ipcoBox && findBox(buffer, "ispe", ipcoBox.offset + 8);
+    if (ispeBox) {
+      return {
+        height: readUInt32BE(buffer, ispeBox.offset + 16),
+        width: readUInt32BE(buffer, ispeBox.offset + 12),
+        type: detectBrands(buffer, 8, metaBox.offset)
+      };
     }
-    const type = detectType(input, 8, metaBox.offset);
-    const images = [];
-    let currentOffset = ipcoBox.offset + 8;
-    while (currentOffset < ipcoBox.offset + ipcoBox.size) {
-      const ispeBox = findBox(input, "ispe", currentOffset);
-      if (!ispeBox) break;
-      const rawWidth = readUInt32BE(input, ispeBox.offset + 12);
-      const rawHeight = readUInt32BE(input, ispeBox.offset + 16);
-      const clapBox = findBox(input, "clap", currentOffset);
-      let width = rawWidth;
-      let height = rawHeight;
-      if (clapBox && clapBox.offset < ipcoBox.offset + ipcoBox.size) {
-        const cropRight = readUInt32BE(input, clapBox.offset + 12);
-        width = rawWidth - cropRight;
-      }
-      images.push({ height, width });
-      currentOffset = ispeBox.offset + ispeBox.size;
-    }
-    if (images.length === 0) {
-      throw new TypeError("Invalid HEIF, no sizes found");
-    }
-    return {
-      width: images[0].width,
-      height: images[0].height,
-      type,
-      ...images.length > 1 ? { images } : {}
-    };
+    throw new TypeError("Invalid HEIF, no size found");
   }
 };
 
@@ -417,27 +287,28 @@ const ICNS = {
     const inputLength = input.length;
     const fileLength = readUInt32BE(input, FILE_LENGTH_OFFSET);
     let imageOffset = SIZE_HEADER;
-    const images = [];
-    while (imageOffset < fileLength && imageOffset < inputLength) {
-      const imageHeader = readImageHeader(input, imageOffset);
-      const imageSize = getImageSize(imageHeader[0]);
-      images.push(imageSize);
-      imageOffset += imageHeader[1];
-    }
-    if (images.length === 0) {
-      throw new TypeError("Invalid ICNS, no sizes found");
-    }
-    return {
-      width: images[0].width,
-      height: images[0].height,
-      ...images.length > 1 ? { images } : {}
+    let imageHeader = readImageHeader(input, imageOffset);
+    let imageSize = getImageSize(imageHeader[0]);
+    imageOffset += imageHeader[1];
+    if (imageOffset === fileLength) return imageSize;
+    const result = {
+      height: imageSize.height,
+      images: [imageSize],
+      width: imageSize.width
     };
+    while (imageOffset < fileLength && imageOffset < inputLength) {
+      imageHeader = readImageHeader(input, imageOffset);
+      imageSize = getImageSize(imageHeader[0]);
+      imageOffset += imageHeader[1];
+      result.images.push(imageSize);
+    }
+    return result;
   }
 };
 
 const J2C = {
   // TODO: this doesn't seem right. SIZ marker doesn't have to be right after the SOC
-  validate: (input) => readUInt32BE(input, 0) === 4283432785,
+  validate: (input) => toHexString(input, 0, 4) === "ff4fff51",
   calculate: (input) => ({
     height: readUInt32BE(input, 12),
     width: readUInt32BE(input, 8)
@@ -446,12 +317,10 @@ const J2C = {
 
 const JP2 = {
   validate(input) {
-    const boxType = toUTF8String(input, 4, 8);
-    if (boxType !== "jP  ") return false;
+    if (readUInt32BE(input, 4) !== 1783636e3 || readUInt32BE(input, 0) < 1) return false;
     const ftypBox = findBox(input, "ftyp", 0);
     if (!ftypBox) return false;
-    const brand = toUTF8String(input, ftypBox.offset + 8, ftypBox.offset + 12);
-    return brand === "jp2 ";
+    return readUInt32BE(input, ftypBox.offset + 4) === 1718909296;
   },
   calculate(input) {
     const jp2hBox = findBox(input, "jp2h", 0);
@@ -528,20 +397,20 @@ function validateInput(input, index) {
 }
 const JPG = {
   validate: (input) => toHexString(input, 0, 2) === "ffd8",
-  calculate(_input) {
-    let input = _input.slice(4);
+  calculate(input) {
+    input = input.slice(4);
     let orientation;
     let next;
     while (input.length) {
       const i = readUInt16BE(input, 0);
-      validateInput(input, i);
       if (input[i] !== 255) {
-        input = input.slice(1);
+        input = input.slice(i);
         continue;
       }
       if (isEXIF(input)) {
         orientation = validateExifBlock(input, i);
       }
+      validateInput(input, i);
       next = input[i + 1];
       if (next === 192 || next === 193 || next === 194) {
         const size = extractSize(input, i + 5);
@@ -557,130 +426,6 @@ const JPG = {
       input = input.slice(i + 2);
     }
     throw new TypeError("Invalid JPG, no size found");
-  }
-};
-
-class BitReader {
-  constructor(input, endianness) {
-    this.input = input;
-    this.endianness = endianness;
-  }
-  // Skip the first 16 bits (2 bytes) of signature
-  byteOffset = 2;
-  bitOffset = 0;
-  /** Reads a specified number of bits, and move the offset */
-  getBits(length = 1) {
-    let result = 0;
-    let bitsRead = 0;
-    while (bitsRead < length) {
-      if (this.byteOffset >= this.input.length) {
-        throw new Error("Reached end of input");
-      }
-      const currentByte = this.input[this.byteOffset];
-      const bitsLeft = 8 - this.bitOffset;
-      const bitsToRead = Math.min(length - bitsRead, bitsLeft);
-      if (this.endianness === "little-endian") {
-        const mask = (1 << bitsToRead) - 1;
-        const bits = currentByte >> this.bitOffset & mask;
-        result |= bits << bitsRead;
-      } else {
-        const mask = (1 << bitsToRead) - 1 << 8 - this.bitOffset - bitsToRead;
-        const bits = (currentByte & mask) >> 8 - this.bitOffset - bitsToRead;
-        result = result << bitsToRead | bits;
-      }
-      bitsRead += bitsToRead;
-      this.bitOffset += bitsToRead;
-      if (this.bitOffset === 8) {
-        this.byteOffset++;
-        this.bitOffset = 0;
-      }
-    }
-    return result;
-  }
-}
-
-function calculateImageDimension(reader, isSmallImage) {
-  if (isSmallImage) {
-    return 8 * (1 + reader.getBits(5));
-  }
-  const sizeClass = reader.getBits(2);
-  const extraBits = [9, 13, 18, 30][sizeClass];
-  return 1 + reader.getBits(extraBits);
-}
-function calculateImageWidth(reader, isSmallImage, widthMode, height) {
-  if (isSmallImage && widthMode === 0) {
-    return 8 * (1 + reader.getBits(5));
-  }
-  if (widthMode === 0) {
-    return calculateImageDimension(reader, false);
-  }
-  const aspectRatios = [1, 1.2, 4 / 3, 1.5, 16 / 9, 5 / 4, 2];
-  return Math.floor(height * aspectRatios[widthMode - 1]);
-}
-const JXLStream = {
-  validate: (input) => {
-    return toHexString(input, 0, 2) === "ff0a";
-  },
-  calculate(input) {
-    const reader = new BitReader(input, "little-endian");
-    const isSmallImage = reader.getBits(1) === 1;
-    const height = calculateImageDimension(reader, isSmallImage);
-    const widthMode = reader.getBits(3);
-    const width = calculateImageWidth(reader, isSmallImage, widthMode, height);
-    return { width, height };
-  }
-};
-
-function extractCodestream(input) {
-  const jxlcBox = findBox(input, "jxlc", 0);
-  if (jxlcBox) {
-    return input.slice(jxlcBox.offset + 8, jxlcBox.offset + jxlcBox.size);
-  }
-  const partialStreams = extractPartialStreams(input);
-  if (partialStreams.length > 0) {
-    return concatenateCodestreams(partialStreams);
-  }
-  return void 0;
-}
-function extractPartialStreams(input) {
-  const partialStreams = [];
-  let offset = 0;
-  while (offset < input.length) {
-    const jxlpBox = findBox(input, "jxlp", offset);
-    if (!jxlpBox) break;
-    partialStreams.push(
-      input.slice(jxlpBox.offset + 12, jxlpBox.offset + jxlpBox.size)
-    );
-    offset = jxlpBox.offset + jxlpBox.size;
-  }
-  return partialStreams;
-}
-function concatenateCodestreams(partialCodestreams) {
-  const totalLength = partialCodestreams.reduce(
-    (acc, curr) => acc + curr.length,
-    0
-  );
-  const codestream = new Uint8Array(totalLength);
-  let position = 0;
-  for (const partial of partialCodestreams) {
-    codestream.set(partial, position);
-    position += partial.length;
-  }
-  return codestream;
-}
-const JXL = {
-  validate: (input) => {
-    const boxType = toUTF8String(input, 4, 8);
-    if (boxType !== "JXL ") return false;
-    const ftypBox = findBox(input, "ftyp", 0);
-    if (!ftypBox) return false;
-    const brand = toUTF8String(input, ftypBox.offset + 8, ftypBox.offset + 12);
-    return brand === "jxl ";
-  },
-  calculate(input) {
-    const codestream = extractCodestream(input);
-    if (codestream) return JXLStream.calculate(codestream);
-    throw new Error("No codestream found in JXL container");
   }
 };
 
@@ -754,11 +499,12 @@ const handlers = {
     }
     if (dimensions.length === 2) {
       return {
-        height: Number.parseInt(dimensions[1], 10),
-        width: Number.parseInt(dimensions[0], 10)
+        height: parseInt(dimensions[1], 10),
+        width: parseInt(dimensions[0], 10)
       };
+    } else {
+      throw new TypeError("Invalid PNM");
     }
-    throw new TypeError("Invalid PNM");
   },
   pam: (lines) => {
     const size = {};
@@ -769,7 +515,7 @@ const handlers = {
       }
       const [key, value] = line.split(" ");
       if (key && value) {
-        size[key.toLowerCase()] = Number.parseInt(value, 10);
+        size[key.toLowerCase()] = parseInt(value, 10);
       }
       if (size.height && size.width) {
         break;
@@ -780,8 +526,9 @@ const handlers = {
         height: size.height,
         width: size.width
       };
+    } else {
+      throw new TypeError("Invalid PAM");
     }
-    throw new TypeError("Invalid PAM");
   }
 };
 const PNM = {
@@ -904,119 +651,66 @@ const TGA = {
   }
 };
 
-const CONSTANTS = {
-  TAG: {
-    WIDTH: 256,
-    HEIGHT: 257,
-    COMPRESSION: 259
-  },
-  TYPE: {
-    SHORT: 3,
-    LONG: 4,
-    LONG8: 16
-  },
-  ENTRY_SIZE: {
-    STANDARD: 12,
-    BIG: 20
-  },
-  COUNT_SIZE: {
-    STANDARD: 2,
-    BIG: 8
-  }
-};
-function readIFD(input, { isBigEndian, isBigTiff }) {
-  const ifdOffset = isBigTiff ? Number(readUInt64(input, 8, isBigEndian)) : readUInt(input, 32, 4, isBigEndian);
-  const entryCountSize = isBigTiff ? CONSTANTS.COUNT_SIZE.BIG : CONSTANTS.COUNT_SIZE.STANDARD;
-  return input.slice(ifdOffset + entryCountSize);
+function readIFD(input, isBigEndian) {
+  const ifdOffset = readUInt(input, 32, 4, isBigEndian);
+  return input.slice(ifdOffset + 2);
 }
-function readTagValue(input, type, offset, isBigEndian) {
-  switch (type) {
-    case CONSTANTS.TYPE.SHORT:
-      return readUInt(input, 16, offset, isBigEndian);
-    case CONSTANTS.TYPE.LONG:
-      return readUInt(input, 32, offset, isBigEndian);
-    case CONSTANTS.TYPE.LONG8: {
-      const value = Number(readUInt64(input, offset, isBigEndian));
-      if (value > Number.MAX_SAFE_INTEGER) {
-        throw new TypeError("Value too large");
-      }
-      return value;
-    }
-    default:
-      return 0;
+function readValue(input, isBigEndian) {
+  const low = readUInt(input, 16, 8, isBigEndian);
+  const high = readUInt(input, 16, 10, isBigEndian);
+  return (high << 16) + low;
+}
+function nextTag(input) {
+  if (input.length > 24) {
+    return input.slice(12);
   }
 }
-function nextTag(input, isBigTiff) {
-  const entrySize = isBigTiff ? CONSTANTS.ENTRY_SIZE.BIG : CONSTANTS.ENTRY_SIZE.STANDARD;
-  if (input.length > entrySize) {
-    return input.slice(entrySize);
-  }
-}
-function extractTags(input, { isBigEndian, isBigTiff }) {
+function extractTags(input, isBigEndian) {
   const tags = {};
   let temp = input;
-  while (temp?.length) {
+  while (temp && temp.length) {
     const code = readUInt(temp, 16, 0, isBigEndian);
     const type = readUInt(temp, 16, 2, isBigEndian);
-    const length = isBigTiff ? Number(readUInt64(temp, 4, isBigEndian)) : readUInt(temp, 32, 4, isBigEndian);
-    if (code === 0) break;
-    if (length === 1 && (type === CONSTANTS.TYPE.SHORT || type === CONSTANTS.TYPE.LONG || isBigTiff && type === CONSTANTS.TYPE.LONG8)) {
-      const valueOffset = isBigTiff ? 12 : 8;
-      tags[code] = readTagValue(temp, type, valueOffset, isBigEndian);
+    const length = readUInt(temp, 32, 4, isBigEndian);
+    if (code === 0) {
+      break;
+    } else {
+      if (length === 1 && (type === 3 || type === 4)) {
+        tags[code] = readValue(temp, isBigEndian);
+      }
+      temp = nextTag(temp);
     }
-    temp = nextTag(temp, isBigTiff);
   }
   return tags;
 }
-function determineFormat(input) {
+function determineEndianness(input) {
   const signature = toUTF8String(input, 0, 2);
-  const version = readUInt(input, 16, 2, signature === "MM");
-  return {
-    isBigEndian: signature === "MM",
-    isBigTiff: version === 43
-  };
-}
-function validateBigTIFFHeader(input, isBigEndian) {
-  const byteSize = readUInt(input, 16, 4, isBigEndian);
-  const reserved = readUInt(input, 16, 6, isBigEndian);
-  if (byteSize !== 8 || reserved !== 0) {
-    throw new TypeError("Invalid BigTIFF header");
+  if ("II" === signature) {
+    return "LE";
+  } else if ("MM" === signature) {
+    return "BE";
   }
 }
-const signatures = /* @__PURE__ */ new Set([
+const signatures = [
+  // '492049', // currently not supported
   "49492a00",
-  // Little Endian
-  "4d4d002a",
+  // Little endian
+  "4d4d002a"
   // Big Endian
-  "49492b00",
-  // BigTIFF Little Endian
-  "4d4d002b"
-  // BigTIFF Big Endian
-]);
+  // '4d4d002a', // BigTIFF > 4GB. currently not supported
+];
 const TIFF = {
-  validate: (input) => {
-    const signature = toHexString(input, 0, 4);
-    return signatures.has(signature);
-  },
+  validate: (input) => signatures.includes(toHexString(input, 0, 4)),
   calculate(input) {
-    const format = determineFormat(input);
-    if (format.isBigTiff) {
-      validateBigTIFFHeader(input, format.isBigEndian);
-    }
-    const ifdBuffer = readIFD(input, format);
-    const tags = extractTags(ifdBuffer, format);
-    const info = {
-      height: tags[CONSTANTS.TAG.HEIGHT],
-      width: tags[CONSTANTS.TAG.WIDTH],
-      type: format.isBigTiff ? "bigtiff" : "tiff"
-    };
-    if (tags[CONSTANTS.TAG.COMPRESSION]) {
-      info.compression = tags[CONSTANTS.TAG.COMPRESSION];
-    }
-    if (!info.width || !info.height) {
+    const isBigEndian = determineEndianness(input) === "BE";
+    const ifdBuffer = readIFD(input, isBigEndian);
+    const tags = extractTags(ifdBuffer, isBigEndian);
+    const width = tags[256];
+    const height = tags[257];
+    if (!width || !height) {
       throw new TypeError("Invalid Tiff. Missing tags");
     }
-    return info;
+    return { height, width };
   }
 };
 
@@ -1045,17 +739,18 @@ const WEBP = {
     const vp8Header = "VP8" === toUTF8String(input, 12, 15);
     return riffHeader && webpHeader && vp8Header;
   },
-  calculate(_input) {
-    const chunkHeader = toUTF8String(_input, 12, 16);
-    const input = _input.slice(20, 30);
+  calculate(input) {
+    const chunkHeader = toUTF8String(input, 12, 16);
+    input = input.slice(20, 30);
     if (chunkHeader === "VP8X") {
       const extendedHeader = input[0];
       const validStart = (extendedHeader & 192) === 0;
       const validEnd = (extendedHeader & 1) === 0;
       if (validStart && validEnd) {
         return calculateExtended(input);
+      } else {
+        throw new TypeError("Invalid WebP");
       }
-      throw new TypeError("Invalid WebP");
     }
     if (chunkHeader === "VP8 " && input[0] !== 47) {
       return calculateLossy(input);
@@ -1079,8 +774,6 @@ const typeHandlers = /* @__PURE__ */ new Map([
   ["j2c", J2C],
   ["jp2", JP2],
   ["jpg", JPG],
-  ["jxl", JXL],
-  ["jxl-stream", JXLStream],
   ["ktx", KTX],
   ["png", PNG],
   ["pnm", PNM],
@@ -1092,4 +785,4 @@ const typeHandlers = /* @__PURE__ */ new Map([
 ]);
 const types = Array.from(typeHandlers.keys());
 
-export { isRemotePath as a, types as b, appendForwardSlash as c, trimSlashes as d, isInternalPath as e, fileExtension as f, collapseDuplicateTrailingSlashes as g, hasFileExtension as h, isRemoteAllowed as i, joinPaths as j, matchPattern as m, prependForwardSlash as p, removeTrailingForwardSlash as r, slash as s, typeHandlers as t };
+export { types as a, appendForwardSlash as b, trimSlashes as c, isInternalPath as d, collapseDuplicateTrailingSlashes as e, fileExtension as f, hasFileExtension as h, isRemotePath as i, joinPaths as j, prependForwardSlash as p, removeTrailingForwardSlash as r, slash as s, typeHandlers as t };
