@@ -11,7 +11,7 @@ export default function ScrollVideoBackground() {
     const video = videoRef.current;
     if (!video) return;
 
-    let tween: gsap.core.Tween | null = null;
+    let tween: gsap.core.Tween | gsap.core.Timeline | null = null;
     let rafId = 0;
     const state = { target: 0, current: 0, duration: 0 };
 
@@ -34,19 +34,70 @@ export default function ScrollVideoBackground() {
 
       tween?.kill();
 
-      tween = gsap.to(state, {
-        target: state.duration,
-        duration: 1,
-        ease: 'none',
+      const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: document.body,
+          trigger: '#hero-section',
           start: 'top top',
-          end: 'max',
-          scrub: 0.35,
+          end: '+=400%',
+          scrub: 1, // Increased from 0.35 to 1 for buttery smooth, anti-jitter scroll interpolation
+          pin: true,
           fastScrollEnd: true,
           invalidateOnRefresh: true,
         },
       });
+
+      // 1. Video scrubs evenly across the whole scroll duration
+      tl.to(
+        state,
+        {
+          target: state.duration,
+          duration: 1,
+          ease: 'none',
+        },
+        0
+      );
+
+      // 2. Optical Camera Zoom: Mimics moving physically forward through space.
+      // Scaling exponentially ('power3.in') keeps the initial motion focused on the video scrubbing,
+      // and only accelerates the zoom at the end—perfectly mirroring how pushing a camera forward works.
+      tl.fromTo(
+        video,
+        { scale: 1 },
+        {
+          scale: 5, // Reduced from 10 to eliminate synthetic "digital stretch" and emphasize real motion
+          duration: 0.95, 
+          ease: 'power3.in', 
+          force3D: true, 
+        },
+        0 
+      );
+
+      // 3. Text Hold & Dissolve: Text stays completely static and dissolves right when the frame hits a specific cloud texture depth
+      tl.fromTo(
+        '#hero-content',
+        { opacity: 1 },
+        {
+          opacity: 0,
+          duration: 0.15,
+          ease: 'power2.inOut',
+          force3D: true,
+        },
+        0.65 // Trigger pushed significantly deeper into the scroll to match the latest provided screenshot.
+      );
+
+      // 4. Solid pure blue sweeps in smoothly into the background, peaking exactly as the zoom finishes
+      tl.fromTo(
+        '#video-overlay',
+        { backgroundColor: 'rgba(0, 0, 0, 0.2)' },
+        {
+          backgroundColor: 'rgba(56, 114, 169, 1)', // Completely opaque sky blue
+          duration: 0.20,
+          ease: 'power1.inOut',
+        },
+        0.75
+      );
+
+      tween = tl;
 
       if (rafId) {
         window.cancelAnimationFrame(rafId);
@@ -94,7 +145,7 @@ export default function ScrollVideoBackground() {
         preload="auto"
       />
 
-      <div className="absolute inset-0 bg-black/20" />
+      <div id="video-overlay" className="absolute inset-0 bg-black/20" />
     </div>
   );
 }

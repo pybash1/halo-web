@@ -150,13 +150,18 @@ export default function WaitlistModal({ isOpen, onClose, variant = 'standard' }:
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 text-sm rounded-xl transition-all ease-in-out duration-500 disabled:opacity-50 font-serif font-semibold ${
+              className={`w-full py-3 text-sm rounded-xl transition-all ease-in-out duration-500 disabled:opacity-50 font-serif font-semibold flex items-center justify-center gap-2 ${
                 isHalo 
                 ? 'bg-white text-black hover:bg-neutral-200 hover:scale-[1.02] active:scale-95' 
                 : 'bg-black text-white dark:bg-white dark:text-black hover:bg-black/80 dark:hover:bg-white/80 py-2 rounded-md'
               }`}
             >
-              {isLoading ? "Joining..." : <>Join the Waitlist &rarr;</>}
+              {isLoading ? "Joining..." : (
+                <>
+                  Join the Waitlist
+                  <span className="font-sans font-medium text-lg leading-none transform translate-y-[-1px]">&rarr;</span>
+                </>
+              )}
             </button>
           </form>
         </div>
