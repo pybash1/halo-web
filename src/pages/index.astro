@@ -6,6 +6,7 @@ import WaitlistButton from "../components/WaitlistButton";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import ScrollVideoBackground from "../components/ScrollVideoBackground";
+import MissionStories from "../components/MissionStories";
 ---
 
 <html lang="en">
@@ -55,31 +56,10 @@ import ScrollVideoBackground from "../components/ScrollVideoBackground";
           </div>
         </div>
 
-        <!-- Mission Section -->
-        <section id="mission" class="min-h-[100svh] flex items-center justify-center px-4 md:px-10 py-20 backdrop-blur-[2px]" style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.42) 14%, rgba(0,0,0,0.42) 86%, rgba(0,0,0,0) 100%);">
-          <div class="space-y-6 md:space-y-10 max-w-2xl">
-            <h2 class="text-4xl md:text-6xl font-serif">Our Mission</h2>
-            <p class="font-satoshi text-base md:text-lg leading-relaxed text-white/85">
-              We believe safety should not be a luxury or something you have to
-              worry about when you are just trying to live your life.
-            </p>
-            <p class="font-satoshi text-base md:text-lg leading-relaxed text-white/85">
-              Our mission is simple: give people the tools they need to feel
-              secure and get help fast when it matters most. Whether someone is
-              walking home alone, in an unsafe relationship, or facing any threat
-              to their wellbeing, they deserve more than just hoping for the best.
-            </p>
-            <p class="font-satoshi text-base md:text-lg leading-relaxed text-white/85">
-              We are building Halo to bridge that gap between feeling vulnerable
-              and feeling protected. Real safety features that work when you need
-              them, designed by people who understand what it is like to feel unsafe.
-            </p>
-            <p class="font-satoshi text-base md:text-lg leading-relaxed text-white/85">
-              Everyone should be able to move through the world with confidence,
-              knowing that help is always within reach.
-            </p>
-          </div>
-        </section>
+        <!-- Mission Stories Section -->
+        <div id="mission" class="relative z-20">
+          <MissionStories client:load />
+        </div>
 
         <!-- About Section -->
         <section id="about" class="min-h-[100svh] flex items-center justify-center px-4 md:px-10 py-20" style="background: transparent;">
@@ -104,5 +84,22 @@ import ScrollVideoBackground from "../components/ScrollVideoBackground";
       </div>
       <Footer />
     </main>
+    <script>
+      import Lenis from 'lenis';
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      const lenis = new Lenis();
+
+      lenis.on('scroll', ScrollTrigger.update);
+
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+
+      gsap.ticker.lagSmoothing(0);
+    </script>
   </body>
 </html>

@@ -38,11 +38,15 @@ export default function ScrollVideoBackground() {
         scrollTrigger: {
           trigger: '#hero-section',
           start: 'top top',
-          end: '+=400%',
-          scrub: 1, // Increased from 0.35 to 1 for buttery smooth, anti-jitter scroll interpolation
+          end: '+=150%', // Ends exactly when the blue background finishes
+          scrub: 1, 
           pin: true,
           fastScrollEnd: true,
           invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            const isDissolved = self.progress > 0.8; // Adjusted progress scale
+            window.dispatchEvent(new CustomEvent('hero-dissolve-progress', { detail: isDissolved }));
+          }
         },
       });
 
@@ -57,44 +61,54 @@ export default function ScrollVideoBackground() {
         0
       );
 
-      // 2. Optical Camera Zoom: Mimics moving physically forward through space.
-      // Scaling exponentially ('power3.in') keeps the initial motion focused on the video scrubbing,
-      // and only accelerates the zoom at the end—perfectly mirroring how pushing a camera forward works.
+      // 2. Optical Camera Zoom
       tl.fromTo(
         video,
         { scale: 1 },
         {
-          scale: 5, // Reduced from 10 to eliminate synthetic "digital stretch" and emphasize real motion
-          duration: 0.95, 
+          scale: 5, 
+          duration: 1, // Stretch to end of timeline
           ease: 'power3.in', 
           force3D: true, 
         },
         0 
       );
 
-      // 3. Text Hold & Dissolve: Text stays completely static and dissolves right when the frame hits a specific cloud texture depth
+      // 3. Text Hold & Dissolve
       tl.fromTo(
         '#hero-content',
         { opacity: 1 },
         {
           opacity: 0,
-          duration: 0.15,
+          duration: 0.2,
           ease: 'power2.inOut',
           force3D: true,
         },
-        0.65 // Trigger pushed significantly deeper into the scroll to match the latest provided screenshot.
+        0.8 // Trigger pushed to 0.8
       );
 
-      // 4. Solid pure blue sweeps in smoothly into the background, peaking exactly as the zoom finishes
+      // 4. Solid pure blue sweeps in smoothly
       tl.fromTo(
         '#video-overlay',
         { backgroundColor: 'rgba(0, 0, 0, 0.2)' },
         {
-          backgroundColor: 'rgba(56, 114, 169, 1)', // Completely opaque sky blue
-          duration: 0.20,
+          backgroundColor: 'rgba(56, 114, 169, 1)', 
+          duration: 0.2,
           ease: 'power1.inOut',
         },
-        0.75
+        0.8 // Ends at 1.0 exactly
+      );
+
+      // 5. Also fade the document body
+      tl.fromTo(
+        'body',
+        { backgroundColor: 'rgba(0, 0, 0, 1)' },
+        {
+          backgroundColor: 'rgba(56, 114, 169, 1)',
+          duration: 0.2,
+          ease: 'power1.inOut',
+        },
+        0.8 // Ends at 1.0 exactly
       );
 
       tween = tl;
@@ -104,6 +118,9 @@ export default function ScrollVideoBackground() {
       }
       rafId = window.requestAnimationFrame(render);
       ScrollTrigger.refresh();
+
+      // Dispatch event strictly AFTER the hero pin spacer has been fully calculated and injected
+      window.dispatchEvent(new CustomEvent('hero-pin-ready'));
     };
 
     const handleLoadedMetadata = () => {
@@ -129,8 +146,12 @@ export default function ScrollVideoBackground() {
       if (rafId) {
         window.cancelAnimationFrame(rafId);
       }
-      tween?.kill();
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      if (tween) {
+        tween.kill();
+        if ((tween as any).scrollTrigger) {
+          (tween as any).scrollTrigger.kill();
+        }
+      }
     };
   }, []);
 
