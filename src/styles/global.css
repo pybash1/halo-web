@@ -19,6 +19,18 @@
   --font-matter: "Matter", "Satoshi", sans-serif;
 
   --animate-spin-slow: spin 8s linear infinite;
+  --animate-scroll-y: scrollY 40s linear infinite;
+  --animate-scroll-y-reverse: scrollYReverse 40s linear infinite;
+}
+
+@keyframes scrollY {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes scrollYReverse {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
 }
 
 html {
