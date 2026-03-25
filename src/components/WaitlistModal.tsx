@@ -15,6 +15,8 @@ export default function WaitlistModal({ isOpen, onClose, variant = 'standard' }:
   const [isVisible, setIsVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  const isHalo = variant === 'halo';
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -88,17 +90,37 @@ export default function WaitlistModal({ isOpen, onClose, variant = 'standard' }:
 
   if (!isOpen || !mounted) return null;
 
-  const isHalo = variant === 'halo';
+  const modalClasses = {
+    backdrop: `fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-[9999] shadow-2xl transition-all duration-500 ease-in-out ${
+      isVisible ? "opacity-100" : "opacity-0"
+    }`,
+    modal: `${isHalo ? 'bg-black shadow-[0_0_80px_rgba(255,255,255,0.3)]' : 'bg-white dark:bg-neutral-900'} rounded-2xl p-8 max-w-md w-full mx-4 relative transition-all duration-500 ease-out ${
+      isVisible
+        ? "opacity-100 scale-100 translate-y-0"
+        : "opacity-0 scale-95 translate-y-4"
+    }`,
+    title: `text-3xl font-serif ${isHalo ? 'text-white' : ''}`,
+    subtitle: `font-satoshi text-sm ${isHalo ? 'text-white/70' : ''}`,
+    input: `w-full px-2 py-1.5 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-300 ${
+      isHalo
+      ? 'bg-white/10 text-white placeholder-white/40 border-none px-4 py-3 text-center'
+      : 'border border-gray-300 text-black focus:ring-black'
+    }`,
+    button: `w-full py-3 text-sm rounded-xl transition-all ease-in-out duration-500 disabled:opacity-50 font-serif font-semibold flex items-center justify-center gap-2 ${
+      isHalo
+      ? 'bg-white text-black hover:bg-neutral-200 hover:scale-[1.02] active:scale-95'
+      : 'bg-black text-white dark:bg-white dark:text-black hover:bg-black/80 dark:hover:bg-white/80 py-2 rounded-md'
+    }`,
+    closeButton: `absolute top-4 right-4 ${isHalo ? 'text-white/50 hover:text-white' : 'dark:text-white text-black hover:text-gray-500'} transition ease-in-out duration-500 text-xl leading-none`
+  };
 
   return createPortal(
     <div
-      className={`fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-[9999] shadow-2xl transition-all duration-500 ease-in-out ${
-        isVisible ? "opacity-100" : "opacity-0"
-      }`}
+      className={modalClasses.backdrop}
       onClick={handleBackdropClick}
     >
       {isHalo && (
-        <div 
+        <div
           className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ease-in-out ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
@@ -107,22 +129,16 @@ export default function WaitlistModal({ isOpen, onClose, variant = 'standard' }:
           }}
         />
       )}
-      <div
-        className={`${isHalo ? 'bg-black shadow-[0_0_80px_rgba(255,255,255,0.3)]' : 'bg-white dark:bg-neutral-900'} rounded-2xl p-8 max-w-md w-full mx-4 relative transition-all duration-500 ease-out ${
-          isVisible
-            ? "opacity-100 scale-100 translate-y-0"
-            : "opacity-0 scale-95 translate-y-4"
-        }`}
-      >
+      <div className={modalClasses.modal}>
         <button
           onClick={handleClose}
-          className={`absolute top-4 right-4 ${isHalo ? 'text-white/50 hover:text-white' : 'dark:text-white text-black hover:text-gray-500'} transition ease-in-out duration-500 text-xl leading-none`}
+          className={modalClasses.closeButton}
         >
           ×
         </button>
         <div className="text-center space-y-6">
-          <div className={`text-3xl font-serif ${isHalo ? 'text-white' : ''}`}>Join the Waitlist</div>
-          <div className={`font-satoshi text-sm ${isHalo ? 'text-white/70' : ''}`}>
+          <div className={modalClasses.title}>Join the Waitlist</div>
+          <div className={modalClasses.subtitle}>
             Be first in line when Halo drops because personal safety shouldn't
             be a luxury.
           </div>
@@ -132,11 +148,7 @@ export default function WaitlistModal({ isOpen, onClose, variant = 'standard' }:
               placeholder="Enter your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full px-2 py-1.5 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-300 ${
-                isHalo 
-                ? 'bg-white/10 text-white placeholder-white/40 border-none px-4 py-3 text-center' 
-                : 'border border-gray-300 text-black focus:ring-black'
-              }`}
+              className={modalClasses.input}
               required
               disabled={isLoading}
             />
@@ -150,11 +162,7 @@ export default function WaitlistModal({ isOpen, onClose, variant = 'standard' }:
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 text-sm rounded-xl transition-all ease-in-out duration-500 disabled:opacity-50 font-serif font-semibold flex items-center justify-center gap-2 ${
-                isHalo 
-                ? 'bg-white text-black hover:bg-neutral-200 hover:scale-[1.02] active:scale-95' 
-                : 'bg-black text-white dark:bg-white dark:text-black hover:bg-black/80 dark:hover:bg-white/80 py-2 rounded-md'
-              }`}
+              className={modalClasses.button}
             >
               {isLoading ? "Joining..." : (
                   <span className="font-sans font-medium text-xs leading-none transform translate-y-[-1px]">Join the Waitlist&nbsp;&nbsp;&rarr;</span>

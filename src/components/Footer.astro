@@ -155,39 +155,20 @@
   </script>
 
   <style>
-    @keyframes scroll {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
-    }
-    
-    .animate-scroll {
-      animation: scroll 25s linear infinite;
-    }
-
     /* Marquee fade effect */
     .marquee-container {
       -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
       mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
     }
 
-    /* Dim other links when hovering over one */
-    .footer-links:has(a:hover) a:not(:hover) {
-      color: rgba(255, 255, 255, 0.3);
-      transition: color 0.3s duration-300;
-    }
-
-    /* Keep hovered link bright */
-    .footer-links a:hover {
-      color: white;
-    }
-
-    /* Dim social icons when hovering over one */
+    /* Interactive link states */
+    .footer-links:has(a:hover) a:not(:hover),
     .follow-socials:has(a:hover) a:not(:hover) {
       color: rgba(255, 255, 255, 0.3);
-      transition: color 0.3s duration-300;
+      transition: color 0.3s ease;
     }
 
-    /* Keep hovered social bright */
+    .footer-links a:hover,
     .follow-socials a:hover {
       color: white;
     }
