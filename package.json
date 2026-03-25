@@ -1,5 +1,5 @@
 {
-  "name": "halo-waitlist",
+  "name": "halo-web",
   "type": "module",
   "packageManager": "bun@latest",
   "version": "0.0.1",
