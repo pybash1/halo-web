@@ -3,12 +3,80 @@
 @font-face {
   font-family: "Satoshi";
   src: url("/fonts/Satoshi-Variable.woff2") format("woff2");
-  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Matter";
+  src: url("/fonts/Matter.woff2") format("woff2");
   font-display: swap;
 }
 
 @theme {
   --font-serif: "Instrument Serif", serif;
-  --font-sans: "DM Sans Variable", sans-serif;
+  --font-sans: "Matter", sans-serif;
   --font-satoshi: "Satoshi", sans-serif;
+  --font-matter: "Matter", "Satoshi", sans-serif;
+
+  --animate-spin-slow: spin 8s linear infinite;
+  --animate-scroll: scroll 25s linear infinite;
+  --animate-scroll-y: scrollY 40s linear infinite;
+  --animate-scroll-y-reverse: scrollYReverse 40s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes scrollY {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes scrollYReverse {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom cursor system */
+html,
+body {
+  cursor: url("/cursor-default.svg") 3 2, default;
+}
+
+button,
+a {
+  cursor: url("/cursor-pointer.svg") 7 6, pointer;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  cursor: url("/cursor-text.svg") 12 12, text;
+}
+
+button:disabled,
+[disabled] {
+  cursor: not-allowed;
+}
+
+/* Default cursor for sections */
+section {
+  cursor: url("/cursor-default.svg") 3 2, default;
+}
+
+/* Ensure mission and about sections have default cursor */
+#mission,
+#about {
+  cursor: url("/cursor-default.svg") 3 2, default;
 }

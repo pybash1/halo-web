@@ -1,24 +1,276 @@
 ---
-import WaitlistButton from "./WaitlistButton.tsx";
+import WaitlistButton from "./WaitlistButton";
 ---
 
-<nav
-  class="flex flex-col md:flex-row justify-between items-center px-4 md:px-24 py-2 bg-white dark:bg-black dark:text-white"
->
-  <a href="/" class="block md:hidden font-serif text-2xl pb-4">halo</a>
-  <div class="flex items-center justify-center gap-4 md:gap-8 text-sm">
-    <a href="/" class="hidden md:block font-serif text-2xl">halo</a>
-    <a href="/mission">Mission</a>
-    <a href="/about">About</a>
-    <a href="/roadmap">Roadmap</a>
-  </div>
-  <div class="hidden md:flex items-center justify-center gap-8 text-sm">
-    <a href="mailto:mitra.ananjan@gmail.com?subject=About%20Halo">Contact</a>
-    <WaitlistButton
-      className="bg-black text-white dark:bg-white dark:text-black py-1 text-sm rounded-md hover:bg-black/80 dark:hover:bg-white/80 transition-colors ease-in-out duration-500 cursor-pointer px-2.5"
-      client:load
-    >
-      Join the Waitlist
-    </WaitlistButton>
+<nav id="main-nav" class="group/nav fixed top-0 w-full z-50 px-4 pt-4 transition-transform duration-500 ease-in-out" data-menu-open="false">
+  <div class="navbar-glass relative mx-auto flex w-full max-w-5xl items-center h-[56px] md:h-[68px] overflow-hidden rounded-[24px] px-4 md:px-6">
+
+    <!-- Mobile: Hamburger / Close Toggle Button (hidden on desktop) -->
+    <button id="nav-toggle" aria-label="Toggle Menu" class="md:hidden relative z-20 flex h-10 w-10 items-center justify-start text-black/80 hover:text-black transition-transform active:scale-95">
+      <!-- Hamburger Icon -->
+      <svg class="absolute h-5 w-5 transition-all duration-500 transform group-data-[menu-open=true]/nav:opacity-0 group-data-[menu-open=true]/nav:-rotate-90 group-data-[menu-open=true]/nav:scale-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="8" x2="20" y2="8" />
+        <line x1="4" y1="16" x2="20" y2="16" />
+      </svg>
+      <!-- Close Icon -->
+      <svg class="absolute h-5 w-5 opacity-0 rotate-90 scale-50 transition-all duration-500 transform group-data-[menu-open=true]/nav:opacity-100 group-data-[menu-open=true]/nav:rotate-0 group-data-[menu-open=true]/nav:scale-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+
+    <!-- Desktop Layout (hidden on mobile) -->
+    <div class="hidden md:flex items-center justify-between w-full">
+      <!-- Left: Halo Logo -->
+      <a href="#top" class="font-serif text-2xl text-black/85 pointer-events-auto">halo</a>
+
+      <!-- Center: Navigation Links -->
+      <div class="flex items-center gap-8 text-sm font-medium text-black/80">
+        <a href="#mission" class="nav-desktop-link group relative inline-flex h-5 overflow-hidden">
+          <div class="transition-transform duration-[400ms] ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-5">
+            <span class="flex h-5 items-center">Mission</span>
+            <span class="flex h-5 items-center text-black">Mission</span>
+          </div>
+        </a>
+
+        <a href="#about" class="nav-desktop-link group relative inline-flex h-5 overflow-hidden">
+          <div class="transition-transform duration-[400ms] ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-5">
+            <span class="flex h-5 items-center">About</span>
+            <span class="flex h-5 items-center text-black">About</span>
+          </div>
+        </a>
+
+        <div class="group relative flex h-5 items-center justify-center disabled-roadmap">
+          <span>Roadmap</span>
+          <div class="pointer-events-none absolute -inset-x-4 z-10 flex -rotate-3 scale-75 items-center justify-center opacity-0 transition-all duration-[400ms] ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-rotate-12 group-hover:scale-100 group-hover:opacity-100">
+            <div class="flex items-center justify-center bg-[#FFC000] border-[1.5px] border-black px-2 py-1 shadow-sm">
+              <span class="whitespace-nowrap text-[0.5rem] font-black leading-none tracking-widest text-black">COMING SOON</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Waitlist Button -->
+      <div class="pointer-events-auto">
+        <WaitlistButton
+          className="bg-black text-white py-2 px-5 text-sm font-medium rounded-xl hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)] transition-shadow duration-300 shadow-sm"
+          client:load
+        >
+          Join the Waitlist
+        </WaitlistButton>
+      </div>
+    </div>
+
+    <!-- Mobile: DEFAULT CONTENT: Halo + Waitlist (shown when menu closed) -->
+    <div class="md:hidden absolute inset-0 flex items-center justify-between px-4 transition-all duration-[600ms] ease-[cubic-bezier(0.76,0,0.24,1)] z-10 pointer-events-none group-data-[menu-open=true]/nav:-translate-y-full group-data-[menu-open=true]/nav:opacity-0">
+
+      <!-- Center: Halo Logo -->
+      <a href="#top" class="font-serif text-2xl text-black/85 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto group-data-[menu-open=true]/nav:pointer-events-none">halo</a>
+
+      <!-- Right: Waitlist Button -->
+      <div class="ml-auto pointer-events-auto group-data-[menu-open=true]/nav:pointer-events-none">
+        <WaitlistButton
+          className="bg-black text-white py-1.5 px-4 text-sm font-medium rounded-xl hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)] transition-shadow duration-300 shadow-sm"
+          client:load
+        >
+          Join
+        </WaitlistButton>
+      </div>
+    </div>
+
+    <!-- Mobile: MENU CONTENT: Links (shown when menu open) -->
+    <div class="md:hidden absolute inset-0 flex items-center justify-center gap-6 translate-y-full opacity-0 transition-all duration-[600ms] ease-[cubic-bezier(0.76,0,0.24,1)] z-10 pointer-events-none group-data-[menu-open=true]/nav:translate-y-0 group-data-[menu-open=true]/nav:opacity-100 group-data-[menu-open=true]/nav:pointer-events-auto text-sm font-medium text-black/80">
+      <a href="#mission" class="nav-menu-link group relative inline-flex h-5 overflow-hidden">
+        <div class="transition-transform duration-[400ms] ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-5">
+          <span class="flex h-5 items-center">Mission</span>
+          <span class="flex h-5 items-center text-black">Mission</span>
+        </div>
+      </a>
+
+      <a href="#about" class="nav-menu-link group relative inline-flex h-5 overflow-hidden">
+        <div class="transition-transform duration-[400ms] ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-5">
+          <span class="flex h-5 items-center">About</span>
+          <span class="flex h-5 items-center text-black">About</span>
+        </div>
+      </a>
+
+      <div class="group relative flex h-5 items-center justify-center disabled-roadmap">
+        <span>Roadmap</span>
+        <div class="pointer-events-none absolute -inset-x-4 z-10 flex -rotate-3 scale-75 items-center justify-center opacity-0 transition-all duration-[400ms] ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-rotate-12 group-hover:scale-100 group-hover:opacity-100">
+          <div class="flex items-center justify-center bg-[#FFC000] border-[1.5px] border-black px-2 py-1 shadow-sm">
+            <span class="whitespace-nowrap text-[0.5rem] font-black leading-none tracking-widest text-black">COMING SOON</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
+
+<style>
+  .navbar-glass {
+    background: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0.2)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    pointer-events: auto;
+    cursor: url("/cursor-default.svg") 3 2, default;
+  }
+
+  .navbar-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    background-image: radial-gradient(
+      circle at 20% 30%,
+      rgba(255, 255, 255, 0.65) 0.6px,
+      transparent 0.8px
+    );
+    background-size: 4px 4px;
+    mix-blend-mode: overlay;
+  }
+
+  /* Ensure cursor state persists during navbar transform animation */
+  #main-nav {
+    pointer-events: auto;
+    cursor: url("/cursor-default.svg") 3 2, default;
+  }
+
+  /* Navbar links maintain proper cursor */
+  #main-nav a, #main-nav button {
+    cursor: url("/cursor-pointer.svg") 7 6, pointer;
+  }
+
+  /* Desktop navigation links */
+  .nav-desktop-link {
+    transition: color 0.2s ease;
+  }
+
+  .nav-desktop-link:hover {
+    color: rgb(0 0 0 / 1);
+  }
+
+  /* Disabled Roadmap item */
+  .disabled-roadmap {
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 900px) {
+    .navbar-glass {
+      padding-right: 12px;
+      padding-left: 12px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    setupNavbarObserver();
+    setupMobileMenu();
+  });
+
+  // Fallback for first load
+  setupNavbarObserver();
+  setupMobileMenu();
+
+  function setupMobileMenu() {
+    const nav = document.getElementById('main-nav');
+    const navToggle = document.getElementById('nav-toggle');
+    const menuLinks = document.querySelectorAll('.nav-menu-link');
+
+    if (nav && navToggle) {
+      navToggle.addEventListener('click', () => {
+        const isOpen = nav.getAttribute('data-menu-open') === 'true';
+        nav.setAttribute('data-menu-open', !isOpen ? 'true' : 'false');
+      });
+
+      // Close menu when clicking a link
+      menuLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          nav.setAttribute('data-menu-open', 'false');
+        });
+      });
+    }
+  }
+
+  function setupNavbarObserver() {
+    const nav = document.getElementById("main-nav");
+    const footerContainer = document.getElementById("footer-container") || document.querySelector("footer");
+    
+    if (!nav) return;
+
+    let isFooterVisible = false;
+    let isHeroDissolved = false;
+    let isHovering = false;
+
+    const updateVisibility = () => {
+      // Priority 1: Footer ALWAYS hides nav completely
+      if (isFooterVisible) {
+        nav.classList.add("-translate-y-[150%]");
+        nav.setAttribute('data-menu-open', 'false');
+        return;
+      }
+      
+      // Priority 2: If hero dissolved and NOT hovering, hide nav
+      if (isHeroDissolved && !isHovering) {
+        nav.classList.add("-translate-y-[150%]");
+        nav.setAttribute('data-menu-open', 'false');
+        return;
+      }
+
+      // Default: show nav
+      nav.classList.remove("-translate-y-[150%]");
+    };
+
+    // 1. Footer Intersection
+    if (footerContainer) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          isFooterVisible = entry.isIntersecting;
+          updateVisibility();
+        });
+      }, { threshold: 0.1 });
+      observer.observe(footerContainer);
+    }
+
+    // 2. Hero Dissolve Event
+    window.addEventListener('hero-dissolve-progress', (e) => {
+      isHeroDissolved = (e as CustomEvent).detail;
+      updateVisibility();
+    });
+
+    // 3. Hover Interactions (Top 100px of screen)
+    document.addEventListener('mousemove', (e) => {
+      // If menu is open, don't hide it based on mouse position
+      const isMenuOpen = nav.getAttribute('data-menu-open') === 'true';
+      if (isMenuOpen) return;
+
+      const inHoverZone = e.clientY <= 100;
+      
+      if (inHoverZone && !isHovering) {
+        isHovering = true;
+        updateVisibility();
+      } else if (!inHoverZone && isHovering) {
+        isHovering = false;
+        updateVisibility();
+      }
+    });
+
+    // Ensure nav stays visible if hovering the nav element itself
+    nav.addEventListener('mouseenter', () => { isHovering = true; updateVisibility(); });
+    nav.addEventListener('mouseleave', (e) => { 
+      // Only set to false if we also left the top 100px zone
+      if (e.clientY > 100) {
+        isHovering = false; 
+        updateVisibility(); 
+      }
+    });
+  }
+</script>

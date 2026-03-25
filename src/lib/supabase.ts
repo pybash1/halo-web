@@ -7,8 +7,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Missing Supabase environment variables");
 }
 
-console.log(supabaseUrl);
-
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export type WaitlistEntry = {
