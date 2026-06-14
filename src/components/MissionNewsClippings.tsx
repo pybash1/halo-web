@@ -102,18 +102,86 @@ const papers = [
 
 export default function MissionNewsClippings() {
   const [visibleCount, setVisibleCount] = useState(0);
+  const [decodedCount, setDecodedCount] = useState(0);
   const [overlayOpacity, setOverlayOpacity] = useState(1);
   const [mounted, setMounted] = useState(false);
   const visibleCountRef = useRef(0);
+  const decodedCountRef = useRef(0);
   const overlayOpacityRef = useRef(1);
 
   useEffect(() => {
     let trigger: ScrollTrigger | null = null;
     let didSetup = false;
+    let cancelled = false;
+    const loaded = new Array(clippings.length).fill(false);
+    const concurrency = 5;
+    let activeRequests = 0;
+    let nextPreloadIndex = 0;
+    let desiredPreloadCount = 0;
+
+    const updateDecodedCount = () => {
+      let nextDecodedCount = decodedCountRef.current;
+
+      while (loaded[nextDecodedCount]) {
+        nextDecodedCount += 1;
+      }
+
+      if (nextDecodedCount !== decodedCountRef.current) {
+        decodedCountRef.current = nextDecodedCount;
+        setDecodedCount(nextDecodedCount);
+      }
+    };
+
+    const pumpPreloadQueue = () => {
+      if (cancelled) return;
+
+      while (
+        activeRequests < concurrency &&
+        nextPreloadIndex < desiredPreloadCount &&
+        nextPreloadIndex < clippings.length
+      ) {
+        const index = nextPreloadIndex;
+        nextPreloadIndex += 1;
+        activeRequests += 1;
+
+        const image = new Image();
+        (image as HTMLImageElement & { fetchPriority?: 'high' | 'low' }).fetchPriority =
+          index < 12 ? 'high' : 'low';
+
+        const markLoaded = async () => {
+          try {
+            await image.decode();
+          } catch {
+            // Treat decode failures as loaded so one bad image cannot block later clippings.
+          }
+
+          activeRequests -= 1;
+
+          if (cancelled) return;
+
+          loaded[index] = true;
+          updateDecodedCount();
+          pumpPreloadQueue();
+        };
+
+        image.onload = markLoaded;
+        image.onerror = markLoaded;
+        image.src = clippings[index].src;
+      }
+    };
+
+    const preloadThrough = (count: number) => {
+      desiredPreloadCount = Math.max(
+        desiredPreloadCount,
+        Math.min(clippings.length, count),
+      );
+      pumpPreloadQueue();
+    };
 
     const setup = () => {
       if (didSetup) return;
       didSetup = true;
+      preloadThrough(12);
       setMounted(true);
 
       const revealDistance = clippings.length * 135;
@@ -132,6 +200,7 @@ export default function MissionNewsClippings() {
 
           if (target !== visibleCountRef.current) {
             visibleCountRef.current = target;
+            preloadThrough(target + 10);
             setVisibleCount(target);
           }
 
@@ -155,7 +224,11 @@ export default function MissionNewsClippings() {
       window.addEventListener('hero-pin-ready', setup, { once: true });
     }
 
+    const preloadTimer = window.setTimeout(() => preloadThrough(12), 600);
+
     return () => {
+      cancelled = true;
+      window.clearTimeout(preloadTimer);
       window.removeEventListener('hero-pin-ready', setup);
       trigger?.kill();
     };
@@ -169,7 +242,7 @@ export default function MissionNewsClippings() {
       style={{ zIndex: 60, opacity: overlayOpacity }}
       aria-hidden="true"
     >
-      {clippings.slice(0, visibleCount).map((clipping, i) => {
+      {clippings.slice(0, Math.min(visibleCount, decodedCount)).map((clipping, i) => {
         const pos = positions[i];
         const paper = papers[pos.paper];
         const cardHeight = Math.round(pos.width * 1.18);
