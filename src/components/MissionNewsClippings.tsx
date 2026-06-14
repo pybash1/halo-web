@@ -108,41 +108,56 @@ export default function MissionNewsClippings() {
   const overlayOpacityRef = useRef(1);
 
   useEffect(() => {
-    setMounted(true);
+    let trigger: ScrollTrigger | null = null;
+    let didSetup = false;
 
-    const revealDistance = clippings.length * 135;
-    const fadeDistance = 620;
-    const revealProgressEnd = revealDistance / (revealDistance + fadeDistance);
+    const setup = () => {
+      if (didSetup) return;
+      didSetup = true;
+      setMounted(true);
 
-    const trigger = ScrollTrigger.create({
-      trigger: '#mission',
-      start: 'top top',
-      end: `+=${revealDistance + fadeDistance}`,
-      pin: true,
-      onUpdate(self) {
-        const revealProgress = Math.min(self.progress / revealProgressEnd, 1);
-        const target = Math.min(clippings.length, Math.ceil(revealProgress * clippings.length));
+      const revealDistance = clippings.length * 135;
+      const fadeDistance = 620;
+      const revealProgressEnd = revealDistance / (revealDistance + fadeDistance);
 
-        if (target !== visibleCountRef.current) {
-          visibleCountRef.current = target;
-          setVisibleCount(target);
-        }
+      trigger = ScrollTrigger.create({
+        id: 'mission-clippings',
+        trigger: '#mission',
+        start: 'top top',
+        end: `+=${revealDistance + fadeDistance}`,
+        pin: true,
+        onUpdate(self) {
+          const revealProgress = Math.min(self.progress / revealProgressEnd, 1);
+          const target = Math.min(clippings.length, Math.ceil(revealProgress * clippings.length));
 
-        const fadeProgress = Math.max(0, (self.progress - revealProgressEnd) / (1 - revealProgressEnd));
-        const nextOpacity = 1 - fadeProgress;
+          if (target !== visibleCountRef.current) {
+            visibleCountRef.current = target;
+            setVisibleCount(target);
+          }
 
-        if (Math.abs(nextOpacity - overlayOpacityRef.current) > 0.01) {
-          overlayOpacityRef.current = nextOpacity;
-          setOverlayOpacity(nextOpacity);
-        }
-      },
-    });
+          const fadeProgress = Math.max(0, (self.progress - revealProgressEnd) / (1 - revealProgressEnd));
+          const nextOpacity = 1 - fadeProgress;
 
-    // Refresh to account for the hero pin having already set positions
-    ScrollTrigger.refresh();
+          if (Math.abs(nextOpacity - overlayOpacityRef.current) > 0.01) {
+            overlayOpacityRef.current = nextOpacity;
+            setOverlayOpacity(nextOpacity);
+          }
+        },
+      });
+
+      // Refresh after the mission pin is added, with the hero pin already measured.
+      ScrollTrigger.refresh();
+    };
+
+    if ((window as any).__haloHeroPinReady) {
+      setup();
+    } else {
+      window.addEventListener('hero-pin-ready', setup, { once: true });
+    }
 
     return () => {
-      trigger.kill();
+      window.removeEventListener('hero-pin-ready', setup);
+      trigger?.kill();
     };
   }, []);
 
@@ -191,7 +206,9 @@ export default function MissionNewsClippings() {
                 className="newspaper-card-image"
                 src={clipping.src}
                 alt={clipping.alt}
-                loading="eager"
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
                 draggable={false}
               />
             </div>
