@@ -11,6 +11,8 @@ export default function ScrollVideoBackground() {
     const video = videoRef.current;
     if (!video) return;
 
+    (window as any).__haloHeroPinReady = false;
+
     let tween: gsap.core.Tween | gsap.core.Timeline | null = null;
     let rafId = 0;
     const state = { target: 0, current: 0, duration: 0 };
@@ -36,6 +38,7 @@ export default function ScrollVideoBackground() {
 
       const tl = gsap.timeline({
         scrollTrigger: {
+          id: 'hero-scroll',
           trigger: '#hero-section',
           start: 'top top',
           end: '+=150%',
@@ -120,6 +123,7 @@ export default function ScrollVideoBackground() {
       ScrollTrigger.refresh();
 
       // Dispatch event strictly AFTER the hero pin spacer has been fully calculated and injected
+      (window as any).__haloHeroPinReady = true;
       window.dispatchEvent(new CustomEvent('hero-pin-ready'));
     };
 
@@ -160,10 +164,11 @@ export default function ScrollVideoBackground() {
       <video
         ref={videoRef}
         src="/media/sky_bg.mp4"
+        poster="/media/sky_bg_poster.webp"
         className="h-full w-full object-cover"
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
       />
 
       <div id="video-overlay" className="absolute inset-0 bg-black/20" />
