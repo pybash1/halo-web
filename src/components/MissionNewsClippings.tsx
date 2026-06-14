@@ -3,26 +3,10 @@ import type { CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { clippings } from '../lib/clippings';
+import { preloadImage } from '../lib/preloadImage';
 
 gsap.registerPlugin(ScrollTrigger);
-
-interface Clipping {
-  id: number;
-  src: string;
-  alt: string;
-}
-
-const clippingCount = 44;
-
-const clippings: Clipping[] = Array.from({ length: clippingCount }, (_, index) => {
-  const id = index + 1;
-
-  return {
-    id,
-    src: `/news/clippings/news-${String(id).padStart(2, '0')}.webp`,
-    alt: `Newspaper clipping ${id}`,
-  };
-});
 
 const positions = [
   { top: '5%',  left: '1%',  rotate: -7,  width: 236, paper: 0,  zIndex: 4 },
@@ -144,17 +128,7 @@ export default function MissionNewsClippings() {
         nextPreloadIndex += 1;
         activeRequests += 1;
 
-        const image = new Image();
-        (image as HTMLImageElement & { fetchPriority?: 'high' | 'low' }).fetchPriority =
-          index < 12 ? 'high' : 'low';
-
-        const markLoaded = async () => {
-          try {
-            await image.decode();
-          } catch {
-            // Treat decode failures as loaded so one bad image cannot block later clippings.
-          }
-
+        preloadImage(clippings[index].src, index < 12 ? 'high' : 'low').then(() => {
           activeRequests -= 1;
 
           if (cancelled) return;
@@ -162,11 +136,7 @@ export default function MissionNewsClippings() {
           loaded[index] = true;
           updateDecodedCount();
           pumpPreloadQueue();
-        };
-
-        image.onload = markLoaded;
-        image.onerror = markLoaded;
-        image.src = clippings[index].src;
+        });
       }
     };
 
