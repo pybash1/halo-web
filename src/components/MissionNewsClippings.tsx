@@ -6,48 +6,23 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface Story {
+interface Clipping {
   id: number;
-  source: string;
-  title: string;
-  body: string;
-  tag: string;
+  src: string;
+  alt: string;
 }
 
-const stories: Story[] = [
-  { id: 1, source: 'BBC News',        title: 'Late Night Commute',     tag: 'Personal Safety', body: 'A student walking home late at night found herself followed. With her phone nearly dead and no one around, she had to think fast to reach safety.' },
-  { id: 2, source: 'The Guardian',    title: 'Unsafe Streets',         tag: 'Urban Safety',    body: 'Reports show a steep rise in anxiety among nighttime workers commuting through urban areas with inadequate lighting and no visible security.' },
-  { id: 3, source: 'Local News',      title: 'Campus Alert',           tag: 'Campus Safety',   body: 'A university issued warnings after a series of incidents near the library, urging students to walk in pairs and keep emergency contacts ready.' },
-  { id: 4, source: 'TechCrunch',      title: 'Safety Tech Gap',        tag: 'Technology',      body: 'Consumer devices have prioritized fitness tracking while neglecting the real need: a reliable, discreet way to signal distress in dangerous moments.' },
-  { id: 5, source: 'NY Times',        title: 'Domestic Concerns',      tag: 'Domestic Safety', body: 'Advocates are calling for tools built for those in unsafe home situations — ones that work without an open phone call or any visible signal.' },
-  { id: 6, source: 'NPR',             title: 'Community Watch',        tag: 'Community',       body: 'Neighborhood groups are adopting digital tools to collaboratively monitor streets and respond faster to safety incidents after dark.' },
-  { id: 7, source: 'Reuters',         title: 'Elderly Isolation',      tag: 'Elder Safety',    body: 'Seniors living alone face heightened risk with no quick, reliable way to call for help during a fall or medical emergency at home.' },
-  { id: 8, source: 'AP News',         title: 'Night Shift Workers',    tag: 'Workplace Safety',body: 'Hospital and service staff finishing after midnight report feeling exposed and unsupported during the final stretch of their commute home.' },
-  { id: 9, source: 'ABC News',        title: 'Teen Safety',            tag: 'Youth Safety',    body: 'Parents and teens alike feel the gap between digital check-ins and being genuinely secure in public spaces and on the way home from school.' },
-  { id: 10, source: 'CNN',            title: 'Trail Incidents',        tag: 'Outdoor Safety',  body: 'Hikers and runners on popular trails describe feeling vulnerable in areas with poor cell coverage and no reliable way to summon emergency help.' },
-  { id: 11, source: 'Forbes',         title: 'Solo Travel Risk',       tag: 'Travel Safety',   body: 'Solo travelers — especially women — navigate unfamiliar cities with little protection beyond local knowledge and the hope that nothing goes wrong.' },
-  { id: 12, source: 'City Desk',      title: 'Parking Lot Panic',      tag: 'Public Spaces',   body: 'After a late grocery run, a shopper realized the walk to her car was more isolated than expected, with no staff or bystanders nearby.' },
-  { id: 13, source: 'Healthline',     title: 'Medical Emergency Alone',tag: 'Health Safety',   body: 'For people living independently, a fall or sudden symptom can turn frightening fast when the phone is across the room.' },
-  { id: 14, source: 'The Verge',      title: 'Wearables Miss Distress',tag: 'Devices',         body: 'Most wearables count steps and sleep, but still make emergency contact feel too visible, too slow, or too dependent on a phone screen.' },
-  { id: 15, source: 'USA Today',      title: 'Ride Share Worries',     tag: 'Transit Safety',  body: 'Passengers describe the unease of realizing a route has changed and wanting a quiet way to alert someone before things escalate.' },
-  { id: 16, source: 'Metro Times',    title: 'Dim Platform Reports',   tag: 'Commuting',       body: 'Transit riders say poorly lit platforms and long waits make the last train home feel like the most vulnerable part of the day.' },
-  { id: 17, source: 'CNBC',           title: 'Caregiver Check-ins',    tag: 'Family Safety',   body: 'Families coordinating care need signals that are immediate and clear, especially when a loved one cannot explain what happened.' },
-  { id: 18, source: 'Al Jazeera',     title: 'Crowd Crush Concern',    tag: 'Event Safety',    body: 'Large events can shift from exciting to dangerous in seconds, leaving attendees searching for help through noise and confusion.' },
-  { id: 19, source: 'Vox',            title: 'Safety Anxiety Rises',   tag: 'Mental Load',     body: 'The constant habit of texting locations, checking exits, and planning escape routes has become invisible labor for many people.' },
-  { id: 20, source: 'Bloomberg',      title: 'Office-to-Home Risk',    tag: 'After Hours',     body: 'Hybrid schedules mean more workers leave offices at irregular times, often crossing quiet business districts after support staff have gone.' },
-  { id: 21, source: 'CBC',            title: 'Remote Trail Gaps',      tag: 'Outdoors',        body: 'Outdoor recreation groups warn that weak coverage and delayed response times make simple incidents more serious outside city limits.' },
-  { id: 22, source: 'The Atlantic',   title: 'Small Signals Matter',   tag: 'Prevention',      body: 'Experts say the safest interventions often happen early, before someone has to make a loud call for help in front of a threat.' },
-  { id: 23, source: 'MarketWatch',    title: 'Parents Seek Assurance', tag: 'Family Tech',     body: 'Parents want more than location dots. They want confidence that a child can reach trusted people quickly when something feels wrong.' },
-  { id: 24, source: 'Morning Edition',title: 'Walking Alone',          tag: 'Everyday Safety', body: 'For many people, the simple act of walking somewhere alone still carries a calculation: who knows where I am, and how quickly could help arrive?' },
-  { id: 25, source: 'Wired',          title: 'Quiet Emergency Tools',  tag: 'Design',          body: 'The next wave of safety tech is being judged by whether it works discreetly, reliably, and without asking people to unlock a screen.' },
-  { id: 26, source: 'Local Bulletin', title: 'Neighborhood Response',  tag: 'Rapid Help',      body: 'Community responders say the hardest moments are the silent ones, when someone needs support but cannot safely explain the situation.' },
-  { id: 27, source: 'Evening Post',    title: 'Last Block Home',        tag: 'Street Safety',   body: 'Residents say the final stretch home often feels the most exposed, especially when stores close and sidewalks empty out.' },
-  { id: 28, source: 'Daily Record',    title: 'Stairwell Concern',      tag: 'Building Safety', body: 'Apartment tenants report feeling uneasy in isolated stairwells where cameras, lighting, and response plans are inconsistent.' },
-  { id: 29, source: 'Public Radio',    title: 'Signal Lost',            tag: 'Connectivity',    body: 'Spotty service can leave people unsure whether a message, call, or emergency alert actually reached anyone.' },
-  { id: 30, source: 'City Journal',    title: 'Empty Station',          tag: 'Transit',         body: 'Late-night riders describe platforms where a few extra minutes of waiting can feel much longer than they should.' },
-  { id: 31, source: 'Dispatch',        title: 'Check-in Fatigue',       tag: 'Everyday Safety', body: 'People are tired of constant manual check-ins, but still want trusted contacts to know when something is wrong.' },
-  { id: 32, source: 'Newswire',        title: 'Faster Help Needed',     tag: 'Emergency',       body: 'First responders and families both point to the same problem: the first alert often comes too late.' },
-];
+const clippingCount = 44;
+
+const clippings: Clipping[] = Array.from({ length: clippingCount }, (_, index) => {
+  const id = index + 1;
+
+  return {
+    id,
+    src: `/news/clippings/news-${String(id).padStart(2, '0')}.webp`,
+    alt: `Newspaper clipping ${id}`,
+  };
+});
 
 const positions = [
   { top: '5%',  left: '1%',  rotate: -7,  width: 236, paper: 0,  zIndex: 4 },
@@ -82,6 +57,18 @@ const positions = [
   { top: '90%', left: '49%', rotate:  7,  width: 198, paper: 7,  zIndex: 33 },
   { top: '87%', left: '64%', rotate: -6,  width: 232, paper: 16, zIndex: 34 },
   { top: '89%', left: '82%', rotate:  4,  width: 190, paper: 22, zIndex: 35 },
+  { top: '15%', left: '22%', rotate: -5,  width: 206, paper: 6,  zIndex: 36 },
+  { top: '17%', left: '61%', rotate:  4,  width: 220, paper: 14, zIndex: 37 },
+  { top: '40%', left: '25%', rotate:  6,  width: 184, paper: 2,  zIndex: 38 },
+  { top: '41%', left: '58%', rotate: -7,  width: 238, paper: 9,  zIndex: 39 },
+  { top: '58%', left: '28%', rotate: -4,  width: 208, paper: 21, zIndex: 40 },
+  { top: '60%', left: '55%', rotate:  8,  width: 194, paper: 5,  zIndex: 41 },
+  { top: '74%', left: '25%', rotate:  3,  width: 224, paper: 13, zIndex: 42 },
+  { top: '74%', left: '57%', rotate: -8,  width: 188, paper: 1,  zIndex: 43 },
+  { top: '30%', left: '38%', rotate: -2,  width: 216, paper: 19, zIndex: 44 },
+  { top: '28%', left: '52%', rotate:  10, width: 168, paper: 24, zIndex: 45 },
+  { top: '51%', left: '42%', rotate:  2,  width: 232, paper: 0,  zIndex: 46 },
+  { top: '66%', left: '41%', rotate: -11, width: 176, paper: 12, zIndex: 47 },
 ];
 
 const papers = [
@@ -123,7 +110,7 @@ export default function MissionNewsClippings() {
   useEffect(() => {
     setMounted(true);
 
-    const revealDistance = stories.length * 135;
+    const revealDistance = clippings.length * 135;
     const fadeDistance = 620;
     const revealProgressEnd = revealDistance / (revealDistance + fadeDistance);
 
@@ -134,7 +121,7 @@ export default function MissionNewsClippings() {
       pin: true,
       onUpdate(self) {
         const revealProgress = Math.min(self.progress / revealProgressEnd, 1);
-        const target = Math.min(stories.length, Math.ceil(revealProgress * stories.length));
+        const target = Math.min(clippings.length, Math.ceil(revealProgress * clippings.length));
 
         if (target !== visibleCountRef.current) {
           visibleCountRef.current = target;
@@ -167,41 +154,46 @@ export default function MissionNewsClippings() {
       style={{ zIndex: 60, opacity: overlayOpacity }}
       aria-hidden="true"
     >
-      {stories.slice(0, visibleCount).map((story, i) => {
+      {clippings.slice(0, visibleCount).map((clipping, i) => {
         const pos = positions[i];
         const paper = papers[pos.paper];
+        const cardHeight = Math.round(pos.width * 1.18);
         const cardStyle = {
-          background: paper.bg,
-          color: paper.ink,
+          background: '#f5f0e6',
           clipPath: paper.shape,
           borderRadius: paper.radius,
-          padding: paper.padding,
-          minHeight: paper.minHeight,
+          height: `clamp(150px, ${Math.round(cardHeight / 12)}vw, ${cardHeight}px)`,
           boxShadow: paper.shadow,
-          '--card-source-color': paper.muted,
-          '--card-rule-color': paper.rule,
-          '--card-title-color': paper.ink,
-          '--card-tag-color': paper.tag,
-          '--card-body-color': paper.body,
-        } as CSSProperties & Record<string, string>;
+        } as CSSProperties;
+        const topPercent = parseFloat(pos.top);
+        const leftPercent = parseFloat(pos.left);
+        const mobileSafe = (leftPercent <= 8 || leftPercent >= 76) && (topPercent <= 22 || topPercent >= 78);
+        const wrapperStyle = {
+          position: 'absolute',
+          top: pos.top,
+          left: pos.left,
+          width: `clamp(144px, ${Math.round(pos.width / 12)}vw, ${pos.width}px)`,
+          transform: `rotate(${pos.rotate}deg)`,
+          zIndex: pos.zIndex,
+          '--mobile-card-width': `${Math.round(pos.width * 0.54)}px`,
+          '--mobile-card-height': `${Math.round(cardHeight * 0.54)}px`,
+        } as CSSProperties & Record<string, string | number>;
 
         return (
           <div
-            key={story.id}
-            style={{
-              position: 'absolute',
-              top: pos.top,
-              left: pos.left,
-              width: `clamp(144px, ${Math.round(pos.width / 12)}vw, ${pos.width}px)`,
-              transform: `rotate(${pos.rotate}deg)`,
-              zIndex: pos.zIndex,
-            }}
+            key={clipping.id}
+            className="newspaper-clipping-wrap"
+            data-mobile-safe={mobileSafe}
+            style={wrapperStyle}
           >
-            <div className="newspaper-card" style={cardStyle}>
-              <p className="card-source">{story.source}</p>
-              <h3 className="card-title">{story.title}</h3>
-              <span className="card-tag">{story.tag}</span>
-              <p className="card-body">{story.body}</p>
+            <div className="newspaper-card newspaper-card--image" style={cardStyle}>
+              <img
+                className="newspaper-card-image"
+                src={clipping.src}
+                alt={clipping.alt}
+                loading="eager"
+                draggable={false}
+              />
             </div>
           </div>
         );
