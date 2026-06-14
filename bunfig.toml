@@ -1,0 +1,12 @@
+# Bun configuration
+[install]
+# Use hardlinks to save disk space
+hardlinks = true
+
+[runtime]
+# Optimize for production
+smol = false
+
+[test]
+# Test configuration
+preload = []

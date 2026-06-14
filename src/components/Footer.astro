@@ -1,8 +1,177 @@
-<footer
-  class="bg-white flex items-center justify-center px-12 py-4 text-black/40 text-sm dark:bg-black dark:text-white/40"
->
-  &copy; {new Date().getFullYear()} Ananjan Mitra & Ritankar Bhunia&nbsp;<span
-    class="font-serif text-base hidden md:block"
-    >- because your safety matters.</span
-  >
+<footer class="relative px-4 py-8 md:px-6 md:py-12 min-h-[100svh] flex flex-col justify-center">
+  <div class="mx-auto flex h-full min-h-[85svh] w-full max-w-7xl flex-col justify-between overflow-hidden rounded-[40px] border border-white/10 bg-[#0c0c0c] text-white/85 shadow-[0_18px_48px_rgba(0,0,0,0.45)] p-8 md:gap-16 md:p-16">
+    <!-- Top Content -->
+    <div class="flex flex-col md:flex-row justify-between gap-12">
+      <!-- Left: Brand & Description -->
+      <div class="space-y-4 flex-1">
+        <div class="font-serif text-[clamp(3rem,10vw,8rem)] leading-none tracking-tight text-white font-black">
+          HALO
+        </div>
+        <p class="max-w-[18rem] text-xs md:text-sm leading-relaxed text-white/70">
+          Founded by Ananjan Mitra and Ritankar Bhunia, Halo is being built to make personal safety faster, simpler, and genuinely reliable when people need support the most.
+        </p>
+      </div>
+
+      <!-- Middle: Navigation Links -->
+      <div class="footer-links flex flex-col items-start gap-3 text-base md:text-lg text-white/85 flex-1">
+        <div class="flex flex-col items-start gap-3">
+          <a href="#mission" class="transition-colors duration-300 hover:text-white">Mission</a>
+          <a href="#about" class="transition-colors duration-300 hover:text-white">About</a>
+          <a href="mailto:halo@pybash.xyz" class="transition-colors duration-300 hover:text-white">FAQ</a>
+          <a href="mailto:ritankarbhunia7474@gmail.com" class="transition-colors duration-300 hover:text-white">Legal</a>
+          <a href="mailto:halo@pybash.xyz" class="transition-colors duration-300 hover:text-white">Contact</a>
+        </div>
+      </div>
+
+      <!-- Right: Subscription & Socials -->
+      <div class="space-y-8 flex-1 max-w-[320px]">
+        <div class="space-y-4">
+          <p class="text-xs md:text-sm text-white/80 leading-relaxed max-w-[20rem]">
+            Be first in line when Halo drops because personal safety shouldn't be a luxury.
+          </p>
+          <form id="subscribe-form" class="flex w-full max-w-[320px] items-center justify-between rounded-xl bg-[#1A1A1A] p-1.5 hover:bg-[#202020] transition-colors focus-within:ring-1 focus-within:ring-white/30">
+            <input 
+              id="subscribe-input"
+              type="email" 
+              placeholder="Email Address" 
+              class="w-full bg-transparent px-3 py-1.5 text-sm text-white placeholder-white/40 focus:outline-none"
+              required 
+            />
+            <button id="subscribe-btn" type="submit" class="rounded-lg bg-white px-5 py-2 text-[10px] font-bold tracking-widest text-black transition-transform hover:scale-105 active:scale-95">
+              SUBSCRIBE
+            </button>
+          </form>
+        </div>
+
+        <div class="follow-socials flex items-center gap-6 text-sm font-bold tracking-widest uppercase text-white/80">
+          <span>FOLLOW US:</span>
+          <div class="social-icons flex items-center gap-5">
+            <!-- Instagram -->
+            <a href="https://instagram.com/ananjan_" aria-label="Instagram" class="hover:text-white transition-colors">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37"></path>
+                <circle cx="17.5" cy="6.5" r="1.5"></circle>
+              </svg>
+            </a>
+            <!-- X (Twitter) -->
+            <a href="https://x.com/py_bash1" aria-label="X" class="hover:text-white transition-colors">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.244 2.25H21.552L14.325 10.61L22.893 21.75H16.183L10.925 14.869L4.912 21.75H1.601L9.362 12.923L1.139 2.25H8.026L12.784 8.528L18.244 2.25ZM17.106 19.789H18.939L6.877 4.103H4.898L17.106 19.789Z" />
+              </svg>
+            </a>
+            <!-- YouTube -->
+            <!-- <a href="#" aria-label="YouTube" class="hover:text-white transition-colors">
+              <svg width="24" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.582 6.186C21.369 5.386 20.738 4.755 19.938 4.542C18.49 4.125 12 4.125 12 4.125C12 4.125 5.51 4.125 4.062 4.542C3.262 4.755 2.631 5.386 2.418 6.186C2 7.634 2 12 2 12C2 12 2 16.366 2.418 17.814C2.631 18.614 3.262 19.245 4.062 19.458C5.51 19.875 12 19.875 12 19.875C12 19.875 18.49 19.875 19.938 19.458C20.738 19.245 21.369 18.614 21.582 17.814C22 16.366 22 12 22 12C22 12 22 7.634 21.582 6.186ZM9.953 15.375V8.625L15.375 12L9.953 15.375Z" />
+              </svg>
+            </a> -->
+            <!-- LinkedIn -->
+            <a href="https://linkedin.com/in/ananjanmitra" aria-label="LinkedIn" class="hover:text-white transition-colors">
+               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom: Marquee -->
+    <div class="mt-auto flex w-full flex-col pt-16 md:pt-0">
+      <div class="w-full overflow-hidden flex items-center mb-8 marquee-container">
+        <div class="flex whitespace-nowrap animate-scroll min-w-max marquee-content">
+          <div class="flex text-[5vw] font-serif font-black uppercase tracking-tight text-white/90">
+            <span class="mx-6">COMING SOON</span>
+            <span class="mx-6 text-white/30">•</span>
+            <span class="mx-6">COMING SOON</span>
+            <span class="mx-6 text-white/30">•</span>
+            <span class="mx-6">COMING SOON</span>
+            <span class="mx-6 text-white/30">•</span>
+            <span class="mx-6">COMING SOON</span>
+            <span class="mx-6 text-white/30">•</span>
+          </div>
+          <div class="flex text-[5vw] font-serif font-black uppercase tracking-tight text-white/90">
+            <span class="mx-6">COMING SOON</span>
+            <span class="mx-6 text-white/30">•</span>
+            <span class="mx-6">COMING SOON</span>
+            <span class="mx-6 text-white/30">•</span>
+            <span class="mx-6">COMING SOON</span>
+            <span class="mx-6 text-white/30">•</span>
+            <span class="mx-6">COMING SOON</span>
+            <span class="mx-6 text-white/30">•</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-t border-white/10 w-full py-6 md:py-8 -mb-8 md:-mb-16 flex items-center justify-center text-xs font-serif text-white/45">
+        © {new Date().getFullYear()} Halo. All Rights Reserved.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const subscribeForm = document.getElementById('subscribe-form') as HTMLFormElement;
+    const subscribeBtn = document.getElementById('subscribe-btn') as HTMLButtonElement;
+    const subscribeInput = document.getElementById('subscribe-input') as HTMLInputElement;
+
+    if (subscribeForm && subscribeBtn && subscribeInput) {
+      subscribeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = subscribeInput.value;
+        if (!email) return;
+
+        const originalText = subscribeBtn.innerText;
+        subscribeBtn.innerText = 'WAIT...';
+        subscribeBtn.disabled = true;
+
+        try {
+          const res = await fetch('/api/waitlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          });
+          const data = await res.json();
+
+          if (res.ok) {
+            subscribeBtn.innerText = 'SUBSCRIBED';
+            subscribeInput.value = '';
+          } else {
+            subscribeBtn.innerText = 'ERROR';
+            console.error(data.error);
+          }
+        } catch (err) {
+          subscribeBtn.innerText = 'ERROR';
+        } finally {
+          setTimeout(() => {
+            if (subscribeBtn.innerText !== 'SUBSCRIBED') {
+              subscribeBtn.innerText = originalText;
+              subscribeBtn.disabled = false;
+            }
+          }, 3000);
+        }
+      });
+    }
+  </script>
+
+  <style>
+    /* Marquee fade effect */
+    .marquee-container {
+      -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+
+    /* Interactive link states */
+    .footer-links:has(a:hover) a:not(:hover),
+    .follow-socials:has(a:hover) a:not(:hover) {
+      color: rgba(255, 255, 255, 0.3);
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover,
+    .follow-socials a:hover {
+      color: white;
+    }
+  </style>
 </footer>
+
