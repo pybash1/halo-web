@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import ScrollVideoBackground from "../components/ScrollVideoBackground";
 import MissionNewsClippings from "../components/MissionNewsClippings";
+import LoadingScreen from "../components/LoadingScreen";
 ---
 
 <html lang="en">
@@ -19,6 +20,7 @@ import MissionNewsClippings from "../components/MissionNewsClippings";
     <title>Halo</title>
   </head>
   <body id="top" class="has-custom-cursor font-sans bg-black text-white">
+    <LoadingScreen client:load />
     <ScrollVideoBackground client:load />
 
     <main class="relative z-20">
