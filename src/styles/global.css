@@ -85,6 +85,36 @@
   overflow: hidden;
 }
 
+.newspaper-card--image {
+  padding: 0;
+  min-height: unset;
+  line-height: 0;
+  background: #f5f0e6;
+}
+
+.newspaper-card-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  user-select: none;
+}
+
+@media (max-width: 640px) {
+  .newspaper-clipping-wrap {
+    width: var(--mobile-card-width) !important;
+  }
+
+  .newspaper-clipping-wrap[data-mobile-safe="false"] {
+    display: none;
+  }
+
+  .newspaper-clipping-wrap .newspaper-card--image {
+    height: var(--mobile-card-height) !important;
+  }
+}
+
 .card-source {
   font-size: 9px;
   font-family: var(--font-satoshi, sans-serif);
