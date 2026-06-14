@@ -15,6 +15,7 @@ export default function ScrollVideoBackground() {
 
     let tween: gsap.core.Tween | gsap.core.Timeline | null = null;
     let rafId = 0;
+    let fallbackTimer = 0;
     const state = { target: 0, current: 0, duration: 0 };
 
     const render = () => {
@@ -123,6 +124,12 @@ export default function ScrollVideoBackground() {
       ScrollTrigger.refresh();
 
       // Dispatch event strictly AFTER the hero pin spacer has been fully calculated and injected
+      window.clearTimeout(fallbackTimer);
+      markPinReady();
+    };
+
+    const markPinReady = () => {
+      if ((window as any).__haloHeroPinReady) return;
       (window as any).__haloHeroPinReady = true;
       window.dispatchEvent(new CustomEvent('hero-pin-ready'));
     };
@@ -131,22 +138,44 @@ export default function ScrollVideoBackground() {
       init();
     };
 
+    let retried = false;
+    const handleError = () => {
+      if ((window as any).__haloHeroPinReady) return;
+
+      // The video source can intermittently fail to load (e.g. a transient
+      // CDN error). Retry once before giving up so the rest of the page
+      // doesn't get stuck waiting on the hero pin/scroll effect.
+      if (!retried) {
+        retried = true;
+        window.setTimeout(() => video.load(), 600);
+        return;
+      }
+
+      window.clearTimeout(fallbackTimer);
+      markPinReady();
+    };
+
     video.pause();
     video.muted = true;
     video.playsInline = true;
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('error', handleError);
 
     if (video.readyState >= 1) {
       init();
-    } else {
-      video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
     }
+
+    // Safety net: never let the rest of the page wait forever on the hero video.
+    fallbackTimer = window.setTimeout(markPinReady, 6000);
 
     const handleResize = () => ScrollTrigger.refresh();
     window.addEventListener('resize', handleResize);
 
     return () => {
+      window.clearTimeout(fallbackTimer);
       window.removeEventListener('resize', handleResize);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('error', handleError);
       if (rafId) {
         window.cancelAnimationFrame(rafId);
       }
