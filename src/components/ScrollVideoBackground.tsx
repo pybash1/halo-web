@@ -12,9 +12,11 @@ export default function ScrollVideoBackground() {
     if (!video) return;
 
     (window as any).__haloHeroPinReady = false;
+    (window as any).__haloHeroVideoBuffered = false;
 
     let tween: gsap.core.Tween | gsap.core.Timeline | null = null;
     let rafId = 0;
+    let fallbackTimer = 0;
     const state = { target: 0, current: 0, duration: 0 };
 
     const render = () => {
@@ -123,30 +125,79 @@ export default function ScrollVideoBackground() {
       ScrollTrigger.refresh();
 
       // Dispatch event strictly AFTER the hero pin spacer has been fully calculated and injected
+      window.clearTimeout(fallbackTimer);
+      markPinReady();
+    };
+
+    const markPinReady = () => {
+      if ((window as any).__haloHeroPinReady) return;
       (window as any).__haloHeroPinReady = true;
       window.dispatchEvent(new CustomEvent('hero-pin-ready'));
+    };
+
+    // Lets the loading screen know the video has enough data buffered to be
+    // scrubbed smoothly, so scroll-driven seeking doesn't stall/jump on prod.
+    const markVideoBuffered = () => {
+      if ((window as any).__haloHeroVideoBuffered) return;
+      (window as any).__haloHeroVideoBuffered = true;
+      window.dispatchEvent(new CustomEvent('hero-video-buffered'));
     };
 
     const handleLoadedMetadata = () => {
       init();
     };
 
+    const handleCanPlayThrough = () => {
+      markVideoBuffered();
+    };
+
+    let retried = false;
+    const handleError = () => {
+      if ((window as any).__haloHeroPinReady) return;
+
+      // The video source can intermittently fail to load (e.g. a transient
+      // CDN error). Retry once before giving up so the rest of the page
+      // doesn't get stuck waiting on the hero pin/scroll effect.
+      if (!retried) {
+        retried = true;
+        window.setTimeout(() => video.load(), 600);
+        return;
+      }
+
+      window.clearTimeout(fallbackTimer);
+      markPinReady();
+      markVideoBuffered();
+    };
+
     video.pause();
     video.muted = true;
     video.playsInline = true;
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('canplaythrough', handleCanPlayThrough);
+    video.addEventListener('error', handleError);
 
     if (video.readyState >= 1) {
       init();
-    } else {
-      video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
     }
+    if (video.readyState >= 4) {
+      markVideoBuffered();
+    }
+
+    // Safety net: never let the rest of the page wait forever on the hero video.
+    fallbackTimer = window.setTimeout(() => {
+      markPinReady();
+      markVideoBuffered();
+    }, 6000);
 
     const handleResize = () => ScrollTrigger.refresh();
     window.addEventListener('resize', handleResize);
 
     return () => {
+      window.clearTimeout(fallbackTimer);
       window.removeEventListener('resize', handleResize);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('canplaythrough', handleCanPlayThrough);
+      video.removeEventListener('error', handleError);
       if (rafId) {
         window.cancelAnimationFrame(rafId);
       }
@@ -168,7 +219,7 @@ export default function ScrollVideoBackground() {
         className="h-full w-full object-cover"
         muted
         playsInline
-        preload="metadata"
+        preload="auto"
       />
 
       <div id="video-overlay" className="absolute inset-0 bg-black/20" />
